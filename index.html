@@ -1,154 +1,188 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>StorePi Demo — Real SDK</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>StorePi Demo — Real Pi SDK</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #fafafa;
-      color: #222;
-      padding: 1rem;
-      max-width: 600px;
-      margin: auto;
-    }
-    button {
-      display: block;
-      width: 100%;
-      margin: 0.5rem 0;
-      padding: 0.8rem;
-      font-size: 1rem;
-      border: none;
-      border-radius: 8px;
-      background: #6c5ce7;
-      color: white;
-    }
-    pre {
-      background: #eee;
-      padding: 0.8rem;
-      border-radius: 8px;
-      overflow-x: auto;
-      font-size: 0.85rem;
-    }
+    body { font-family: system-ui, Arial, sans-serif; background:#f6fbff; color:#0b2130; padding:18px; max-width:900px; margin:0 auto; }
+    header { display:flex; align-items:center; gap:12px; margin-bottom:8px; }
+    h1 { margin:0; font-size:20px; color:#174c6b; }
+    p { margin:6px 0 14px; color:#325a6f; }
+    .controls { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+    button { background:#1867b4; color:white; border:0; padding:10px 12px; border-radius:8px; cursor:pointer; }
+    button:disabled { opacity:0.5; cursor:not-allowed; }
+    #status { margin-top:8px; padding:8px; border-radius:8px; background:#e9f5fb; color:#0b4c6b; font-weight:600; }
+    #log { margin-top:12px; background:#081427; color:#bfe8ff; font-family:monospace; padding:12px; border-radius:8px; white-space:pre-wrap; max-height:360px; overflow:auto; }
+    small{ color:#345a6a; display:block; margin-top:8px;}
   </style>
 </head>
-
 <body>
-  <h2>StorePi Demo — Server Approve (Real)</h2>
-  <p>This demo uses the real Pi SDK. Please open in <strong>Pi Browser</strong>.</p>
+  <header>
+    <div style="width:56px;height:56px;border-radius:10px;background:linear-gradient(180deg,#3aa0ff,#0066cc);display:flex;align-items:center;justify-content:center;color:white;font-weight:700">SP</div>
+    <div>
+      <h1>StorePi Demo — Server Approve (Real)</h1>
+      <p>Open this page in the <strong>Pi Browser</strong> to use the real Pi SDK. Make sure the server key is set (see steps below).</p>
+    </div>
+  </header>
 
-  <button id="check">Check SDK</button>
-  <button id="auth">Authorize (payments)</button>
-  <button id="pay">Test Payment 0.01 Pi</button>
-  <button id="ping">Ping Server</button>
+  <div class="controls">
+    <button id="checkBtn">Check SDK</button>
+    <button id="authBtn">Authorize (payments)</button>
+    <button id="payBtn" disabled>Test Payment 0.01 Pi</button>
+    <button id="pingBtn">Ping Server</button>
+  </div>
 
-  <p><strong>Status:</strong> <span id="status">Idle</span></p>
-  <pre id="log"></pre>
+  <div id="status">Status: idle</div>
+  <div id="log">Logs will appear here...</div>
 
   <!-- Real Pi SDK -->
   <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 
   <script>
-    const statusEl = document.getElementById("status");
-    const logEl = document.getElementById("log");
-    const log = (...args) => {
-      console.log(...args);
-      const t = new Date().toISOString();
-      logEl.textContent = `${t}  ${args.join(" ")}\n` + logEl.textContent;
-    };
-    const setStatus = (msg) => (statusEl.textContent = msg);
+    const logEl = document.getElementById('log');
+    const statusEl = document.getElementById('status');
+    const checkBtn = document.getElementById('checkBtn');
+    const authBtn = document.getElementById('authBtn');
+    const payBtn = document.getElementById('payBtn');
+    const pingBtn = document.getElementById('pingBtn');
 
-    document.getElementById("check").onclick = () => {
-      if (window.Pi) {
-        const hasAuth = typeof Pi.authenticate === "function";
-        const hasPay = Pi.createPayment && typeof Pi.createPayment === "function";
-        log("Pi present:", true, "authenticate:", hasAuth, "createPayment:", hasPay);
-        setStatus("Checked SDK - see log");
-      } else {
-        log("Pi object: MISSING");
-        setStatus("Pi SDK not found (open in Pi Browser)");
-      }
-    };
-
-    document.getElementById("auth").onclick = async () => {
-      if (!window.Pi) return log("Pi SDK missing");
-      setStatus("Authenticating (requesting payments scope)...");
-      try {
-        const scopes = ["payments"];
-        log("Calling Pi.authenticate with scopes", JSON.stringify(scopes));
-        const user = await Pi.authenticate(scopes, onIncompletePaymentFound);
-        log("STATUS Authorized");
-        log("authenticate resolved:", JSON.stringify(user));
-        setStatus("Authorized");
-      } catch (e) {
-        log("STATUS Auth failed");
-        log("Auth error detailed", JSON.stringify(e));
-        setStatus("Auth failed");
-      }
-    };
-
-    document.getElementById("pay").onclick = async () => {
-      if (!window.Pi) return log("Pi SDK missing");
-      setStatus("Creating payment...");
-      log("STATUS Creating payment...");
-      try {
-        const payment = await Pi.createPayment({
-          amount: 0.01,
-          memo: "StorePi Demo Purchase",
-          metadata: { productId: "demo-001" },
-        }, {
-          onReadyForServerApproval: async (paymentId) => {
-            log("onReadyForServerApproval", paymentId);
-            setStatus("Ready for approval: " + paymentId);
-            try {
-              const res = await fetch("/api/approve-payment", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ paymentId }),
-              });
-              const data = await res.json();
-              log("Server approve response", res.status, JSON.stringify(data));
-            } catch (err) {
-              log("Server approval error", JSON.stringify(err));
-              setStatus("Server approval error");
-            }
-          },
-          onReadyForServerCompletion: (paymentId, txid) => {
-            log("onReadyForServerCompletion", paymentId, txid);
-            setStatus("Payment completed");
-          },
-          onCancel: (paymentId) => {
-            log("onCancel", paymentId);
-            setStatus("Cancelled");
-          },
-          onError: (error, payment) => {
-            log("onError", JSON.stringify(error), JSON.stringify(payment));
-            setStatus("Payment error");
-          },
-        });
-        log("Pi.createPayment invoked. Waiting for callbacks...");
-      } catch (err) {
-        log("createPayment threw", JSON.stringify(err));
-        setStatus("createPayment threw error");
-      }
-    };
-
-    document.getElementById("ping").onclick = async () => {
-      setStatus("Pinging server...");
-      try {
-        const res = await fetch("/api/approve-payment");
-        const txt = await res.text();
-        log("/api/approve-payment response", res.status, "->", txt);
-      } catch (err) {
-        log("Ping failed", err);
-        setStatus("Ping failed");
-      }
-    };
-
-    function onIncompletePaymentFound(payment) {
-      log("Incomplete payment found:", JSON.stringify(payment));
+    function now(){ return new Date().toISOString(); }
+    function appendLog(...parts){
+      const text = parts.map(p => (typeof p === 'object' ? JSON.stringify(p) : String(p))).join(' ');
+      const line = now() + '  ' + text;
+      logEl.textContent = line + '\\n' + logEl.textContent;
+      console.log(...parts);
     }
+    function setStatus(s){ statusEl.textContent = 'Status: ' + s; appendLog('STATUS', s); }
+
+    // Safe JSON parse helper
+    function safeParse(text){
+      try { return JSON.parse(text); } catch(e){ return { raw: text }; }
+    }
+
+    // Check SDK presence
+    checkBtn.addEventListener('click', () => {
+      const present = typeof Pi !== 'undefined';
+      const hasAuth = present && typeof Pi.authenticate === 'function';
+      const hasCreate = present && typeof Pi.createPayment === 'function';
+      appendLog('Pi present:', present, 'authenticate:', hasAuth, 'createPayment:', hasCreate);
+      setStatus('Checked SDK - see log');
+      if (present && hasAuth && hasCreate) payBtn.disabled = false;
+    });
+
+    // Improved auth logging
+    authBtn.addEventListener('click', async () => {
+      if (!window.Pi) { appendLog('Pi SDK not detected; open in Pi Browser.'); setStatus('Pi SDK missing'); return; }
+      setStatus('Authenticating (requesting payments scope)...');
+      appendLog('Calling Pi.authenticate with scopes ["payments"]');
+      try {
+        const user = await Pi.authenticate(['payments'], function(incomplete){ appendLog('authenticate incomplete callback', incomplete); });
+        appendLog('authenticate resolved:', user);
+        setStatus('Authorized');
+        payBtn.disabled = false;
+      } catch (err) {
+        // richer error details
+        try {
+          const report = { message: err && err.message, name: err && err.name, stack: err && err.stack, toString: String(err) };
+          appendLog('Auth error detailed', report);
+          console.error('Auth error detailed', report);
+        } catch (e) {
+          appendLog('Auth error (fallback)', String(err));
+        }
+        setStatus('Auth failed');
+      }
+    });
+
+    // Ping server (reads body once)
+    pingBtn.addEventListener('click', async () => {
+      setStatus('Pinging server...');
+      try {
+        const r = await fetch('/api/approve-payment', { method: 'GET' });
+        const text = await r.text();
+        appendLog('/api/approve-payment response', r.status, '->', safeParse(text));
+        setStatus('Ping finished');
+      } catch (e) {
+        appendLog('Ping error', String(e));
+        setStatus('Ping error');
+      }
+    });
+
+    // Payment flow using server-approve pattern
+    payBtn.addEventListener('click', () => {
+      if (!window.Pi || typeof Pi.createPayment !== 'function') {
+        appendLog('Pi.createPayment not available in this browser (open Pi Browser).');
+        alert('Pi.createPayment not available. Open in Pi Browser and authorize first.');
+        return;
+      }
+
+      setStatus('Creating payment...');
+      appendLog('about to call Pi.createPayment (server-approve flow)');
+
+      const paymentData = { amount: 0.01, memo: 'StorePi Demo payment', metadata: { demo:'server-approve' } };
+
+      const paymentCallbacks = {
+        onReadyForServerApproval: async function(paymentId){
+          appendLog('onReadyForServerApproval', paymentId);
+          setStatus('Ready for approval: ' + paymentId);
+
+          try {
+            const resp = await fetch('/api/approve-payment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ paymentId })
+            });
+
+            // read body once
+            const raw = await resp.text();
+            const data = safeParse(raw);
+            appendLog('Server approve response', resp.status, data);
+
+            if (resp.ok) {
+              setStatus('Server approved — waiting for completion');
+            } else {
+              setStatus('Server approval failed');
+              appendLog('Server approval failed body', raw);
+            }
+          } catch (e) {
+            appendLog('Server approval error', String(e));
+            setStatus('Server approval error');
+          }
+        },
+
+        onReadyForServerCompletion: function(paymentId, txid){
+          appendLog('onReadyForServerCompletion', paymentId, txid);
+          setStatus('Payment completed');
+          alert('Payment completed\\nPayment: ' + paymentId + '\\nTx: ' + txid);
+        },
+
+        onCancel: function(paymentId){
+          appendLog('onCancel', paymentId);
+          setStatus('Payment canceled');
+        },
+
+        onError: function(err, payment){
+          appendLog('onError', err, payment);
+          setStatus('Payment error');
+        }
+      };
+
+      try {
+        // prefer 2-arg API (payload, callbacks)
+        Pi.createPayment(paymentData, paymentCallbacks);
+        appendLog('Pi.createPayment invoked. Waiting for callbacks...');
+      } catch (e) {
+        appendLog('createPayment threw', e);
+        setStatus('createPayment threw error');
+      }
+    });
+
+    // auto-check on load
+    window.addEventListener('load', () => {
+      logEl.textContent = '';
+      appendLog('Page loaded - SDK check pending');
+      // Do not auto-enable payBtn here; user must explicitly authorize
+    });
   </script>
 </body>
 </html>
