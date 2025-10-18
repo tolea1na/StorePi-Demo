@@ -1,263 +1,154 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>StorePi Demo — Mock Pi Enabled</title>
-
-  <!-- Real Pi SDK (will be used automatically when Pi Browser injects Pi) -->
-  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StorePi Demo — Real SDK</title>
   <style>
-    :root{--bg:#071427;--card:#0b2030;--accent:#6c5ce7;--muted:#9fbcd6;--mono:#9fc9ff}
-    body{font-family:system-ui,Arial,sans-serif;background:linear-gradient(180deg,#061026,#08142a);color:#e6eef8;margin:0;padding:20px;min-height:100vh;display:flex;align-items:center;justify-content:center}
-    .card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));padding:20px;border-radius:12px;max-width:860px;width:100%;box-shadow:0 8px 30px rgba(0,0,0,0.6)}
-    header{display:flex;align-items:center;gap:12px}
-    h1{margin:0;font-size:20px}
-    p{margin:6px 0;color:var(--muted)}
-    .controls{margin-top:12px}
-    button{background:var(--accent);border:0;color:white;padding:10px 14px;border-radius:8px;font-size:15px;cursor:pointer;margin-right:8px}
-    button:disabled{opacity:.5;cursor:not-allowed}
-    #status{margin-top:10px;padding:8px;border-radius:6px;background:rgba(255,255,255,0.02);color:#cfe9ff}
-    #log{background:#071427;padding:12px;border-radius:8px;margin-top:12px;font-family:monospace;white-space:pre-wrap;color:var(--mono);max-height:320px;overflow:auto}
-    small{color:var(--muted)}
-    .note{margin-top:8px;color:#9fb3cf;font-size:13px}
-    .footer{margin-top:12px;font-size:13px;color:#9fb3cf}
+    body {
+      font-family: Arial, sans-serif;
+      background: #fafafa;
+      color: #222;
+      padding: 1rem;
+      max-width: 600px;
+      margin: auto;
+    }
+    button {
+      display: block;
+      width: 100%;
+      margin: 0.5rem 0;
+      padding: 0.8rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      background: #6c5ce7;
+      color: white;
+    }
+    pre {
+      background: #eee;
+      padding: 0.8rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.85rem;
+    }
   </style>
 </head>
+
 <body>
-  <div class="card" role="main">
-    <header>
-      <div style="width:56px;height:56px;border-radius:10px;background:linear-gradient(180deg,#7b6cf8,#4f3eea);display:flex;align-items:center;justify-content:center;font-weight:700;color:white">SP</div>
-      <div>
-        <h1>StorePi Demo — Server Approve (Mock)</h1>
-        <div style="color:var(--muted);font-size:13px">Demo mode: mock Pi SDK enabled so payments can be tested anywhere.</div>
-      </div>
-    </header>
+  <h2>StorePi Demo — Server Approve (Real)</h2>
+  <p>This demo uses the real Pi SDK. Please open in <strong>Pi Browser</strong>.</p>
 
-    <p>This demo simulates Pi Browser SDK behavior (mock). The server endpoint <code>/api/approve-payment</code> is called automatically when a payment reaches "ready for approval".</p>
+  <button id="check">Check SDK</button>
+  <button id="auth">Authorize (payments)</button>
+  <button id="pay">Test Payment 0.01 Pi</button>
+  <button id="ping">Ping Server</button>
 
-    <div class="controls">
-      <button id="checkBtn">Check SDK</button>
-      <button id="authBtn">Authorize (payments)</button>
-      <button id="payBtn" disabled>Test Payment 0.01 Pi</button>
-      <button id="pingBtn">Ping Server</button>
-    </div>
+  <p><strong>Status:</strong> <span id="status">Idle</span></p>
+  <pre id="log"></pre>
 
-    <div id="status">Status: idle</div>
-    <div id="log">Logs will appear here...</div>
-
-    <p class="note">Note: this page includes a mock Pi implementation for demo/testing. Remove mock before production.</p>
-    <div class="footer">Project: StorePi Demo</div>
-  </div>
-
-  <!-- BEGIN FORCED MOCK Pi (FOR DEMO / TESTING ONLY) -->
-  <script>
-  (function(){
-    // Force-inject mock Pi for demo/testing (OVERWRITES any existing Pi object).
-    try {
-      window.Pi = (function(){
-        const mocked = {
-          _authorized: false,
-          init: function(){ console.log('Mock Pi.init (forced)'); },
-          authenticate: function(scopes, cb){
-            console.log('Mock Pi.authenticate (forced) scopes', scopes);
-            this._authorized = true;
-            const result = {
-              user: {
-                app_id: 'demo-app',
-                uid: 'demo-user',
-                credentials: { scopes: scopes, valid_until: { iso8601: '2099-01-01T00:00:00Z' } },
-                receiving_email: true
-              },
-              accessToken: 'mock-access-token'
-            };
-            try { if (typeof cb === 'function') cb(false); } catch(e){}
-            return Promise.resolve(result);
-          },
-          approvePayment: function(paymentId){
-            console.log('Mock Pi.approvePayment (forced)', paymentId);
-            return Promise.resolve({ ok:true, paymentId });
-          },
-          createPayment: function(payload, maybeCallbacks){
-            let data = payload || {};
-            let callbacks = {};
-            if (maybeCallbacks && typeof maybeCallbacks === 'object' && (maybeCallbacks.onReadyForServerApproval || maybeCallbacks.onReadyForServerCompletion)) {
-              callbacks = maybeCallbacks;
-            } else if (payload && payload.onReadyForServerApproval) {
-              callbacks = {
-                onReadyForServerApproval: payload.onReadyForServerApproval,
-                onReadyForServerCompletion: payload.onReadyForServerCompletion,
-                onCancel: payload.onCancel,
-                onError: payload.onError
-              };
-              data = {};
-            }
-            const paymentId = 'MOCK-' + Math.random().toString(36).slice(2,10);
-            console.log('Mock Pi.createPayment (forced) invoked', paymentId, data);
-            setTimeout(async () => {
-              try {
-                if (typeof callbacks.onReadyForServerApproval === 'function') callbacks.onReadyForServerApproval(paymentId);
-                try {
-                  const resp = await fetch('/api/approve-payment', {
-                    method: 'POST',
-                    headers: {'Content-Type':'application/json'},
-                    body: JSON.stringify({ paymentId })
-                  });
-                  let json;
-                  try { json = await resp.json(); } catch(e){ json = { raw: await resp.text() } }
-                  console.log('Mock server approve response', resp.status, json);
-                  if (resp.ok) {
-                    const txid = (json && json.payment && json.payment.txid) || ('MOCKTX-' + Math.random().toString(36).slice(2,8));
-                    if (typeof callbacks.onReadyForServerCompletion === 'function') callbacks.onReadyForServerCompletion(paymentId, txid);
-                  } else {
-                    if (typeof callbacks.onError === 'function') callbacks.onError({status:resp.status, body:json}, {paymentId});
-                  }
-                } catch(sErr){
-                  if (typeof callbacks.onError === 'function') callbacks.onError({ error: String(sErr) }, { paymentId });
-                }
-              } catch(e){
-                if (typeof callbacks.onError === 'function') callbacks.onError(e, { paymentId });
-              }
-            }, 600);
-            return { paymentId };
-          }
-        };
-        return mocked;
-      })();
-      console.log('FORCED Mock Pi injected for demo/testing');
-    } catch(e){
-      console.error('Failed to inject forced mock Pi', e);
-    }
-  })();
-  </script>
-  <!-- END FORCED MOCK Pi -->
+  <!-- Real Pi SDK -->
+  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 
   <script>
-  (function(){
-    const logEl = document.getElementById('log');
-    const statusEl = document.getElementById('status');
-    const checkBtn = document.getElementById('checkBtn');
-    const authBtn = document.getElementById('authBtn');
-    const payBtn = document.getElementById('payBtn');
-    const pingBtn = document.getElementById('pingBtn');
-
-    function now(){ return new Date().toISOString(); }
-    function appendLog(...args){
-      const text = args.map(a => (typeof a === 'object' ? JSON.stringify(a) : String(a))).join(' ');
-      const line = now() + '  ' + text;
-      logEl.textContent = line + '\n' + logEl.textContent;
+    const statusEl = document.getElementById("status");
+    const logEl = document.getElementById("log");
+    const log = (...args) => {
       console.log(...args);
-    }
-    function setStatus(s){
-      statusEl.textContent = 'Status: ' + s;
-      appendLog('STATUS', s);
-    }
+      const t = new Date().toISOString();
+      logEl.textContent = `${t}  ${args.join(" ")}\n` + logEl.textContent;
+    };
+    const setStatus = (msg) => (statusEl.textContent = msg);
 
-    function checkSDK(){
-      const present = typeof Pi !== 'undefined';
-      const hasAuth = present && typeof Pi.authenticate === 'function';
-      const hasCreate = present && typeof Pi.createPayment === 'function';
-      appendLog('Pi present:', present, 'authenticate:', hasAuth, 'createPayment:', hasCreate);
-      setStatus('Checked SDK - see log');
-      if (present && hasAuth && hasCreate) payBtn.disabled = false;
-    }
-
-    checkBtn.addEventListener('click', checkSDK);
-
-    authBtn.addEventListener('click', async () => {
-      if (typeof Pi === 'undefined') {
-        alert('Pi SDK not detected. Use Pi Browser or enable mock for demo.');
-        return;
+    document.getElementById("check").onclick = () => {
+      if (window.Pi) {
+        const hasAuth = typeof Pi.authenticate === "function";
+        const hasPay = Pi.createPayment && typeof Pi.createPayment === "function";
+        log("Pi present:", true, "authenticate:", hasAuth, "createPayment:", hasPay);
+        setStatus("Checked SDK - see log");
+      } else {
+        log("Pi object: MISSING");
+        setStatus("Pi SDK not found (open in Pi Browser)");
       }
-      setStatus('Authenticating (requesting payments scope)...');
-      appendLog('Calling Pi.authenticate with scopes ["payments"]');
+    };
+
+    document.getElementById("auth").onclick = async () => {
+      if (!window.Pi) return log("Pi SDK missing");
+      setStatus("Authenticating (requesting payments scope)...");
       try {
-        const res = await Pi.authenticate(['payments'], function(incomplete){ appendLog('authenticate incomplete callback', incomplete); });
-        appendLog('authenticate resolved:', res);
-        setStatus('Authorized');
-        payBtn.disabled = false;
+        const scopes = ["payments"];
+        log("Calling Pi.authenticate with scopes", JSON.stringify(scopes));
+        const user = await Pi.authenticate(scopes, onIncompletePaymentFound);
+        log("STATUS Authorized");
+        log("authenticate resolved:", JSON.stringify(user));
+        setStatus("Authorized");
+      } catch (e) {
+        log("STATUS Auth failed");
+        log("Auth error detailed", JSON.stringify(e));
+        setStatus("Auth failed");
+      }
+    };
+
+    document.getElementById("pay").onclick = async () => {
+      if (!window.Pi) return log("Pi SDK missing");
+      setStatus("Creating payment...");
+      log("STATUS Creating payment...");
+      try {
+        const payment = await Pi.createPayment({
+          amount: 0.01,
+          memo: "StorePi Demo Purchase",
+          metadata: { productId: "demo-001" },
+        }, {
+          onReadyForServerApproval: async (paymentId) => {
+            log("onReadyForServerApproval", paymentId);
+            setStatus("Ready for approval: " + paymentId);
+            try {
+              const res = await fetch("/api/approve-payment", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ paymentId }),
+              });
+              const data = await res.json();
+              log("Server approve response", res.status, JSON.stringify(data));
+            } catch (err) {
+              log("Server approval error", JSON.stringify(err));
+              setStatus("Server approval error");
+            }
+          },
+          onReadyForServerCompletion: (paymentId, txid) => {
+            log("onReadyForServerCompletion", paymentId, txid);
+            setStatus("Payment completed");
+          },
+          onCancel: (paymentId) => {
+            log("onCancel", paymentId);
+            setStatus("Cancelled");
+          },
+          onError: (error, payment) => {
+            log("onError", JSON.stringify(error), JSON.stringify(payment));
+            setStatus("Payment error");
+          },
+        });
+        log("Pi.createPayment invoked. Waiting for callbacks...");
       } catch (err) {
-        try { appendLog('Auth error detailed', JSON.stringify(err)); } catch(e){ appendLog('Auth error', err); }
-        setStatus('Auth failed');
+        log("createPayment threw", JSON.stringify(err));
+        setStatus("createPayment threw error");
       }
-    });
+    };
 
-    pingBtn.addEventListener('click', async () => {
-      setStatus('Pinging server...');
+    document.getElementById("ping").onclick = async () => {
+      setStatus("Pinging server...");
       try {
-        const r = await fetch('/api/approve-payment', { method: 'GET' });
-        const txt = await r.text().catch(()=>'<non-text>');
-        appendLog('/api/approve-payment response', r.status, '->', txt);
-      } catch(e) {
-        appendLog('Ping error', String(e));
-        setStatus('Ping error');
+        const res = await fetch("/api/approve-payment");
+        const txt = await res.text();
+        log("/api/approve-payment response", res.status, "->", txt);
+      } catch (err) {
+        log("Ping failed", err);
+        setStatus("Ping failed");
       }
-    });
+    };
 
-    payBtn.addEventListener('click', () => {
-      if (typeof Pi === 'undefined' || typeof Pi.createPayment !== 'function') {
-        appendLog('Pi.createPayment not available in this browser (open Pi Browser or use mock).');
-        alert('Pi.createPayment not available. Open in Pi Browser or use mock.');
-        return;
-      }
-
-      setStatus('Creating payment...');
-      appendLog('about to call Pi.createPayment (server-approve flow)');
-
-      const paymentData = { amount: 0.01, memo: 'Server-approve demo payment', metadata: { demo:'server-approve' } };
-
-      const paymentCallbacks = {
-        onReadyForServerApproval: async function(paymentId){
-          appendLog('onReadyForServerApproval', paymentId);
-          setStatus('Ready for approval: ' + paymentId);
-          // server approval already attempted by mock, but also try server call here for real implementations
-          try {
-            const resp = await fetch('/api/approve-payment', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ paymentId })
-            });
-            let data;
-            try { data = await resp.json(); } catch(e){ data = { raw: await resp.text() }; }
-            appendLog('Server approve response', resp.status, data);
-          } catch(e) {
-            appendLog('Server approval error', e);
-            setStatus('Server approval error');
-          }
-        },
-        onReadyForServerCompletion: function(paymentId, txid){
-          appendLog('onReadyForServerCompletion', paymentId, txid);
-          setStatus('Payment completed');
-          alert('Payment completed: ' + paymentId + '\nTx: ' + txid);
-        },
-        onCancel: function(paymentId){
-          appendLog('onCancel', paymentId);
-          setStatus('Payment canceled');
-        },
-        onError: function(err, payment){
-          appendLog('onError', err, payment);
-          setStatus('Payment error');
-        }
-      };
-
-      try {
-        // prefer the two-arg style (payload, callbacks)
-        Pi.createPayment(paymentData, paymentCallbacks);
-        appendLog('Pi.createPayment invoked. Waiting for callbacks...');
-      } catch(e) {
-        appendLog('createPayment threw', e);
-        setStatus('createPayment threw error');
-        alert('createPayment threw: ' + (e && e.message ? e.message : String(e)));
-      }
-    });
-
-    // initial check on load
-    window.addEventListener('load', () => {
-      logEl.textContent = '';
-      checkSDK();
-    });
-  })();
+    function onIncompletePaymentFound(payment) {
+      log("Incomplete payment found:", JSON.stringify(payment));
+    }
   </script>
 </body>
 </html>
