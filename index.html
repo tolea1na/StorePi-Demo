@@ -3,85 +3,53 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>StorePi — Demo Store</title>
-<meta name="description" content="StorePi: polished demo store for Pi payments. Professional UI with animations. Made with 💙 — Forza Inter!" />
+<title>StorePi — Demo Store (Working)</title>
+<meta name="description" content="StorePi — polished demo store for Pi payments. Demo mode ON by default to test easily." />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%2300121f' width='100' height='100' rx='20'/%3E%3Ctext x='50' y='62' font-size='48' text-anchor='middle' fill='%230a84ff' font-family='Arial'%3E%CF%80%3C/text%3E%3C/svg%3E">
 <style>
   :root{
-    --bg-1:#041226;
-    --bg-2:#07162b;
-    --panel:#071a2b;
-    --navy:#001f3b;
-    --accent:#0a84ff;   /* electric blue */
-    --accent-2:#00336f; /* deep inter blue */
-    --muted:#9bb3c8;
-    --white:#e6f3ff;
-    --yellow:#ffc857;
-    --radius:14px;
-    --shadow: 0 18px 46px rgba(2,8,20,0.6);
+    --bg1:#041226; --bg2:#07162b; --accent:#0a84ff; --muted:#9bb3c8; --white:#e6f3ff; --radius:14px;
     font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
     color-scheme: dark;
   }
   *{box-sizing:border-box}
-  html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-1),var(--bg-2));color:var(--white)}
+  html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:var(--white)}
   .wrap{max-width:1100px;margin:28px auto;padding:18px}
-  header{display:flex;align-items:center;gap:14px;padding:14px;border-radius:14px;background:linear-gradient(90deg,#021724,#071a2b);box-shadow:var(--shadow)}
+  header{display:flex;align-items:center;gap:14px;padding:14px;border-radius:14px;background:linear-gradient(90deg,#021724,#071a2b);box-shadow:0 12px 40px rgba(0,0,0,0.6)}
   .brand{display:flex;gap:12px;align-items:center}
-  .logo{width:64px;height:64px;border-radius:12px;background:linear-gradient(180deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px;box-shadow:0 10px 30px rgba(0,0,0,0.6)}
+  .logo{width:64px;height:64px;border-radius:12px;background:linear-gradient(180deg,var(--accent),#00336f);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px}
   h1{margin:0;font-size:20px}
   .subtitle{color:var(--muted);font-size:13px;margin-top:4px}
-
   .controls-top{margin-left:auto;display:flex;gap:8px;align-items:center}
   .tag{background:linear-gradient(90deg,#ffd77a,#ffc857);padding:6px 8px;border-radius:10px;color:#122233;font-weight:800;font-size:12px}
-
   .grid{display:grid;grid-template-columns:1fr;gap:18px;margin-top:18px}
   @media(min-width:920px){ .grid{grid-template-columns:1fr 360px} }
-
   .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.008));border-radius:14px;padding:18px;box-shadow:0 12px 40px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.02)}
   .headline{font-size:20px;color:var(--accent);margin:0}
   .lead{color:var(--muted);margin-top:6px}
-
   .row{display:flex;gap:16px;align-items:center;margin-top:14px}
   .thumb{width:140px;height:110px;border-radius:12px;background:linear-gradient(180deg,#04273e,#05314a);display:flex;align-items:center;justify-content:center;font-size:44px;color:var(--accent);font-weight:900;box-shadow:0 10px 30px rgba(0,0,0,0.6)}
   .meta{color:var(--muted);font-size:14px}
   .price{font-weight:900;font-size:18px;color:var(--accent);margin-top:8px}
-
   .actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
-  .btn{background:linear-gradient(180deg,var(--accent),#0778e6);border:0;color:white;padding:12px 16px;border-radius:10px;font-weight:800;cursor:pointer;box-shadow:0 12px 30px rgba(8,18,40,0.6);transition:transform .12s ease,box-shadow .12s ease}
+  .btn{background:linear-gradient(180deg,var(--accent),#0778e6);border:0;color:white;padding:12px 16px;border-radius:10px;font-weight:800;cursor:pointer;box-shadow:0 12px 30px rgba(8,18,40,0.6);transition:transform .12s ease}
   .btn:active{transform:translateY(1px)}
   .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);padding:11px 14px}
   .status{margin-top:12px;padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);color:var(--accent);display:inline-block}
   .log{margin-top:12px;background:linear-gradient(180deg,#071227,#041726);padding:12px;border-radius:10px;color:#9fe0ff;font-family:monospace;white-space:pre-wrap;max-height:320px;overflow:auto}
-
-  /* demo toggle + theme switch */
   .row-small{display:flex;gap:8px;align-items:center}
   .switch{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03);cursor:pointer}
   .switch input{display:none}
-
-  /* right column */
   .side{position:sticky;top:20px}
   .receipt{border-radius:12px;padding:14px;background:linear-gradient(180deg,#052331,#042c38);border:1px solid rgba(255,255,255,0.02)}
   .receipt h3{margin:0;color:var(--accent)}
   .receipt .meta{color:var(--muted);font-size:13px;margin-top:8px}
   .tx{font-family:monospace;color:var(--accent);word-break:break-all;margin-top:6px}
-
-  /* heart / flourish */
-  .big-heart{font-size:28px;margin-left:10px;color:var(--accent);filter:drop-shadow(0 6px 18px rgba(10,132,255,0.18))}
-
-  /* animations */
-  .pulse{animation:pulse 2.6s infinite}
-  @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.02)}100%{transform:scale(1)}}
-  .confetti {position:fixed;pointer-events:none;inset:0;mix-blend-mode:screen}
   .hidden{display:none}
   .small{font-size:13px;color:var(--muted)}
-
-  /* responsive small tweaks */
-  @media(max-width:520px){
-    .logo{width:52px;height:52px;font-size:18px}
-    .thumb{width:110px;height:92px;font-size:34px}
-  }
+  .pulse{animation:pulse 2.6s infinite}
+  @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.02)}100%{transform:scale(1)}}
+  canvas.confetti{position:fixed;pointer-events:none;inset:0;mix-blend-mode:screen;z-index:9999}
 </style>
 </head>
 <body>
@@ -93,15 +61,14 @@
           <h1>StorePi</h1>
           <div class="subtitle">Polished demo store — server-approved Pi payments</div>
         </div>
-        <div class="big-heart" title="Made with 💙">💙</div>
       </div>
 
       <div class="controls-top">
         <div class="tag">DEMO</div>
         <div class="row-small" title="Use Demo Mode to test outside Pi Browser">
           <label class="switch" id="demoSwitch">
-            <input type="checkbox" id="demoMode">
-            <span id="demoLabel" class="small">Demo mode: OFF</span>
+            <input type="checkbox" id="demoMode" checked>
+            <span id="demoLabel" class="small">Demo mode: ON</span>
           </label>
         </div>
       </div>
@@ -109,7 +76,7 @@
 
     <div class="grid" role="main">
       <main class="card" aria-labelledby="mainTitle">
-        <div class="headline-row" style="display:flex;justify-content:space-between;align-items:center">
+        <div style="display:flex;justify-content:space-between;align-items:center">
           <div>
             <h2 id="mainTitle" class="headline">Professional Purchase Flow</h2>
             <div class="lead">Clear actions, helpful feedback, and server-side approval for test payments.</div>
@@ -134,7 +101,7 @@
             </div>
 
             <div id="status" class="status">Status: idle</div>
-            <div id="log" class="log" aria-live="polite">Logs will appear here — open the Pi Browser for real SDK tests, or toggle Demo Mode to simulate.</div>
+            <div id="log" class="log" aria-live="polite">Logs will appear here — Demo Mode is ON by default.</div>
           </div>
         </div>
       </main>
@@ -166,19 +133,11 @@
     </footer>
   </div>
 
-  <!-- confetti placeholder (we trigger animated small bursts on success) -->
-  <canvas id="confetti" class="confetti hidden" aria-hidden="true"></canvas>
+  <canvas id="confetti" class="confetti hidden"></canvas>
 
 <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 <script>
-/* ============================
-   Single-file StorePi — final
-   ============================
-   - Replace your index.html with this file.
-   - Keep server endpoints /api/approve-payment and /api/manual-complete.
-   - Set PI_API_KEY on your server (Vercel env) for production approval.
-*/
-
+/* Single-file working StorePi — demo ON by default, real SDK used if available */
 const logEl = document.getElementById('log');
 const statusEl = document.getElementById('status');
 const payBtn = document.getElementById('payBtn');
@@ -197,17 +156,14 @@ const manualComplete = document.getElementById('manualComplete');
 
 const confettiCanvas = document.getElementById('confetti');
 
-function stamp(){ return new Date().toISOString(); }
+function now(){ return new Date().toISOString(); }
 function appendLog(...parts){
-  const text = parts.map(p => (typeof p === 'object' ? JSON.stringify(p) : String(p))).join(' ');
-  const line = stamp() + '  ' + text;
+  const text = parts.map(p => (typeof p==='object' ? JSON.stringify(p) : String(p))).join(' ');
+  const line = now() + '  ' + text;
   logEl.textContent = line + '\\n' + logEl.textContent;
   console.log(...parts);
 }
-function setStatus(s){
-  statusEl.textContent = 'Status: ' + s;
-  appendLog('STATUS', s);
-}
+function setStatus(s){ statusEl.textContent = 'Status: ' + s; appendLog('STATUS', s); }
 function showReceipt(paymentId, txid, message){
   receiptPanel.removeAttribute('aria-hidden');
   receiptMeta.textContent = message || 'Payment completed';
@@ -216,104 +172,86 @@ function showReceipt(paymentId, txid, message){
   openTx.onclick = ()=> { if (txid) window.open('https://api.testnet.minepi.com/transactions/' + txid, '_blank'); else alert('No txid'); };
 }
 
-/* -------------------------
-   Demo / Mock SDK (optional)
-   If Demo Mode is ON and Pi is not present, we'll provide a mock Pi object
-   that behaves similarly for testing purposes.
-   ------------------------- */
+/* MOCK Pi SDK for demo/testing (installed only if demo on and real Pi absent) */
 function installMockPi(){
-  if (window.Pi && typeof window.Pi.createPayment === 'function') return; // don't override real Pi
+  if (window.Pi && typeof window.Pi.createPayment === 'function') return;
   window.Pi = {
-    _mockAccessToken: "mock-access-token",
+    _mockAccessToken:'mock-access-token',
     init(){ appendLog('Mock Pi.init called'); },
     authenticate: function(scopes, incompleteCb){
-      appendLog('Mock Pi.authenticate called with scopes', scopes);
+      appendLog('Mock Pi.authenticate', scopes);
       return new Promise((resolve) => {
-        setTimeout(()=>{
-          const result = { user: { app_id: 'demo-app', uid: 'demo-user', credentials: { scopes, valid_until: { iso8601: '2099-01-01T00:00:00Z' } }, receiving_email: true }, accessToken: this._mockAccessToken };
-          try{ if (typeof incompleteCb === 'function') incompleteCb(false); } catch(e){}
-          resolve(result);
+        setTimeout(()=> {
+          try{ if (typeof incompleteCb === 'function') incompleteCb(false); }catch(e){}
+          resolve({ user:{app_id:'demo-app', uid:'demo-user', credentials:{scopes, valid_until:{iso8601:'2099-01-01T00:00:00Z'}}, receiving_email:true}, accessToken:this._mockAccessToken });
         }, 600);
       });
     },
     createPayment: function(paymentData, cbs){
-      appendLog('Mock Pi.createPayment invoked', paymentData);
-      // generate a mock payment id
+      appendLog('Mock Pi.createPayment', paymentData);
       const paymentId = 'MOCK-' + Math.random().toString(36).slice(2,10);
-      // call callbacks in sequence to simulate flow
-      setTimeout(()=>{ if (cbs && typeof cbs.onReadyForServerApproval === 'function') cbs.onReadyForServerApproval(paymentId); }, 800);
-      // simulate server approval result and completion later — server side may also be called from client code
+      setTimeout(()=>{ if (cbs && typeof cbs.onReadyForServerApproval === 'function') cbs.onReadyForServerApproval(paymentId); }, 700);
       setTimeout(()=>{ const tx = 'MOCKTX-' + Math.random().toString(36).slice(2,12); if (cbs && typeof cbs.onReadyForServerCompletion === 'function') cbs.onReadyForServerCompletion(paymentId, tx); }, 2000);
-      // return nothing (match SDK behavior)
     },
-    approvePayment: function(paymentId){ appendLog('Mock Pi.approvePayment', paymentId); }
+    approvePayment:function(paymentId){ appendLog('Mock Pi.approvePayment', paymentId); }
   };
 }
 
-/* -------------------------
-   Initialize Pi SDK safely
-   ------------------------- */
-let piInitialized = false;
-function initPiIfAvailable(){
+/* Initialize Pi safely; call init right away if Pi exists (or after installing mock) */
+function initPi(){
   try {
     if (typeof Pi !== 'undefined' && typeof Pi.init === 'function') {
       Pi.init({ version: "2.0" });
-      piInitialized = true;
       appendLog('Pi.init called (SDK present)');
+      return true;
     } else {
-      appendLog('Pi object not detected');
-      piInitialized = false;
+      appendLog('Pi object not detected yet');
+      return false;
     }
   } catch(e){
     appendLog('Pi.init error', e);
-    piInitialized = false;
+    return false;
   }
 }
 
-initPiIfAvailable();
-
-/* Toggle Demo Mode UI */
-function updateDemoLabel(){
-  demoLabel.textContent = 'Demo mode: ' + (demoModeCheckbox.checked ? 'ON' : 'OFF');
+/* Demo mode default ON: install mock and init if no real Pi */
+if (demoModeCheckbox.checked){
+  installMockPi();
+  initPi();
 }
+function updateDemoLabel(){ demoLabel.textContent = 'Demo mode: ' + (demoModeCheckbox.checked ? 'ON' : 'OFF'); }
 demoModeCheckbox.addEventListener('change', ()=>{
   updateDemoLabel();
-  if (demoModeCheckbox.checked) {
+  if (demoModeCheckbox.checked){
     installMockPi();
-    initPiIfAvailable(); // mock installs Pi, so init again
+    initPi();
     appendLog('Demo mode enabled — mock SDK installed');
+    alert('Demo Mode is ON. You can test the payment flow without Pi Browser.');
   } else {
-    appendLog('Demo mode disabled — reload page to ensure real SDK is used if available');
+    appendLog('Demo mode disabled — reload page to use real Pi SDK if present');
+    alert('Demo Mode is OFF. Reload the page in Pi Browser to use the real SDK.');
   }
 });
 updateDemoLabel();
 
-/* -------------------------
-   Helper: server approve (single read of response body)
-   ------------------------- */
+/* SERVER APPROVE helper: read body only once and parse safely */
 async function serverApprove(paymentId, txid=null){
   try {
     const body = { paymentId };
     if (txid) body.txid = txid;
-    const resp = await fetch('/api/approve-payment', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-    const text = await resp.text();               // read body exactly once
+    const resp = await fetch('/api/approve-payment', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(body) });
+    const text = await resp.text(); // read exactly once
     let data;
     try { data = JSON.parse(text); } catch(e) { data = { raw: text }; }
-    appendLog('/api/approve-payment result', resp.status, data);
+    appendLog('/api/approve-payment', resp.status, data);
     return { ok: resp.ok, status: resp.status, data };
-  } catch (err){
-    appendLog('serverApprove network error', String(err));
-    return { ok:false, error: String(err) };
+  } catch(e){
+    appendLog('serverApprove network error', String(e));
+    return { ok:false, error: String(e) };
   }
 }
 
-/* -------------------------
-   UI actions: check/auth/pay/ping/manual complete
-   ------------------------- */
+/* BUTTONS: Check / Auth / Ping / Buy / Manual Complete */
 checkBtn.addEventListener('click', ()=>{
   const present = typeof Pi !== 'undefined';
   const hasAuth = present && typeof Pi.authenticate === 'function';
@@ -323,13 +261,11 @@ checkBtn.addEventListener('click', ()=>{
 });
 
 authBtn.addEventListener('click', async ()=>{
-  if (typeof Pi === 'undefined') { alert('Pi SDK not present. Toggle Demo Mode to test, or open inside Pi Browser.'); return; }
+  if (typeof Pi === 'undefined'){ alert('Pi SDK not present. Enable Demo Mode to test or open in Pi Browser.'); return; }
   setStatus('Authenticating (requesting payments scope)...');
   appendLog('Calling Pi.authenticate with scopes ["payments"]');
   try {
-    const res = await Pi.authenticate(['payments'], function(incomplete){
-      appendLog('authenticate incomplete callback', incomplete);
-    });
+    const res = await Pi.authenticate(['payments'], function(incomplete){ appendLog('authenticate incomplete', incomplete); });
     appendLog('authenticate resolved:', res);
     setStatus('Authorized');
     alert('Authorized — you can now make payments.');
@@ -342,72 +278,58 @@ authBtn.addEventListener('click', async ()=>{
 
 pingBtn.addEventListener('click', async ()=>{
   setStatus('Pinging server...');
-  appendLog('Pinging /api/approve-payment (GET) to verify endpoint');
-  try {
+  appendLog('Pinging /api/approve-payment');
+  try{
     const r = await fetch('/api/approve-payment');
     const text = await r.text();
     appendLog('/api/approve-payment ping', r.status, text);
-    alert('Ping result: ' + r.status + ' — see logs');
-  } catch(e){
-    appendLog('Ping error', e);
-    alert('Ping failed — check server or network');
+    alert('Ping result: ' + r.status + ' (see logs)');
+  }catch(e){
+    appendLog('Ping failed', e);
+    alert('Ping failed — check server');
   }
 });
 
-/* Payment flow — uses callback-style createPayment (SDK expects callbacks)
-   - onReadyForServerApproval: we call our server to approve (no txid yet)
-   - onReadyForServerCompletion: payment finished with txid
-*/
 payBtn.addEventListener('click', async ()=>{
   if (typeof Pi === 'undefined' || typeof Pi.createPayment !== 'function'){
     alert('Open in Pi Browser and authorize first — or enable Demo Mode to test.');
     return;
   }
-
   setStatus('Creating payment...');
   appendLog('about to call Pi.createPayment (server-approve flow)');
-
-  const payload = { amount: 0.01, memo: 'StorePi Demo', metadata: { demo: true } };
+  const payload = { amount: 0.01, memo: 'StorePi Demo', metadata: { demo:true } };
 
   const callbacks = {
     onReadyForServerApproval: async function(paymentId){
       appendLog('onReadyForServerApproval', paymentId);
       setStatus('Ready for approval: ' + paymentId);
-      // Send request to server to approve (no txid yet)
       setStatus('Requesting server approval...');
       const res = await serverApprove(paymentId, null);
-      if (res.ok){
-        setStatus('Server approved — waiting for completion');
-        appendLog('Server approved (response)', res.data);
-      } else {
-        setStatus('Server approval failed');
-        appendLog('Server approval failed', res);
-        // Keep the paymentId visible so support can finalize manually
-      }
+      if (res.ok) setStatus('Server approved — waiting for completion');
+      else setStatus('Server approval failed');
     },
     onReadyForServerCompletion: function(paymentId, txid){
       appendLog('onReadyForServerCompletion', paymentId, txid);
       setStatus('Payment completed');
       showReceipt(paymentId, txid, 'Payment completed — thank you!');
-      // Inform server with txid for persistence (best effort)
-      serverApprove(paymentId, txid).then(r => appendLog('post-complete server result', r));
+      serverApprove(paymentId, txid).then(r => appendLog('post-complete result', r));
       triggerConfetti();
     },
     onCancel: function(paymentId){
       appendLog('onCancel', paymentId);
       setStatus('Payment canceled');
-      alert('Payment was cancelled.');
+      alert('Payment cancelled');
     },
     onError: function(err, payment){
       appendLog('onError', err, payment);
       setStatus('Payment error');
-      alert('Payment error — check logs for details');
+      alert('Payment error — check logs');
     }
   };
 
   try {
     Pi.createPayment(payload, callbacks);
-    appendLog('Pi.createPayment invoked (callbacks passed)');
+    appendLog('Pi.createPayment invoked');
   } catch(e){
     appendLog('createPayment threw', e);
     setStatus('createPayment threw error');
@@ -415,26 +337,24 @@ payBtn.addEventListener('click', async ()=>{
   }
 });
 
-/* Manual complete button (support) */
+/* Manual complete (support) */
 manualComplete.addEventListener('click', async ()=>{
-  const pid = prompt('Payment ID to complete (copy from logs or receipt):');
-  const tx = prompt('Tx ID (optional, if you have it):');
+  const pid = prompt('Payment ID to complete (from logs/receipt):');
+  const tx = prompt('Tx ID (optional):');
   if (!pid) return;
   try {
     const qs = new URLSearchParams({ paymentId: pid, txid: tx || '' });
     const r = await fetch('/api/manual-complete?' + qs.toString());
-    const text = await r.text();
-    appendLog('manual-complete', r.status, text);
-    alert('Manual-complete result: ' + r.status);
+    const txt = await r.text();
+    appendLog('manual-complete', r.status, txt);
+    alert('Manual-complete result: ' + r.status + ' — see logs');
   } catch(e){
     appendLog('manual-complete error', e);
     alert('Error');
   }
 });
 
-/* -------------------------
-   Confetti animation (small, tasteful)
-   ------------------------- */
+/* CONFETTI: tasteful burst on completion */
 function triggerConfetti(){
   try {
     const canvas = confettiCanvas;
@@ -448,7 +368,7 @@ function triggerConfetti(){
 
     const pieces = [];
     const colors = ['#0a84ff','#00bfff','#ffd77a','#ffffff'];
-    for (let i=0;i<55;i++){
+    for (let i=0;i<48;i++){
       pieces.push({
         x: Math.random()*canvas.width,
         y: -Math.random()*canvas.height*0.2,
@@ -457,4 +377,33 @@ function triggerConfetti(){
         size: (Math.random()*8+4)*dpr,
         color: colors[Math.floor(Math.random()*colors.length)],
         rot: Math.random()*Math.PI*2,
-        vr: (Math.random()-
+        vr: (Math.random()-0.5)*0.2
+      });
+    }
+    let t = 0;
+    function frame(){
+      t++;
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      for (let p of pieces){
+        p.x += p.vx; p.y += p.vy; p.vy += 0.12 * dpr; p.rot += p.vr;
+        ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+        ctx.fillStyle = p.color; ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size*0.6);
+        ctx.restore();
+      }
+      if (t < 160) requestAnimationFrame(frame);
+      else { canvas.classList.add('hidden'); ctx.clearRect(0,0,canvas.width,canvas.height); }
+    }
+    requestAnimationFrame(frame);
+  } catch(e){ console.warn('confetti failed', e); }
+}
+
+/* Helpful: try to init Pi again at intervals (in case SDK loads later) */
+let piRetryCount = 0;
+const piRetryInterval = setInterval(()=> {
+  piRetryCount++;
+  if (initPi() || piRetryCount > 12) { clearInterval(piRetryInterval); appendLog('Pi init retry stopped'); }
+}, 1000);
+
+</script>
+</body>
+</html>
