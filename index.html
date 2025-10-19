@@ -1,168 +1,173 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>StorePi — Buy with Pi</title>
-  <meta name="description" content="Buy demo items with Pi. Server-approved payments, secure and fast.">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23186fb4' width='100' height='100' rx='18'/><text x='50' y='58' font-size='50' text-anchor='middle' fill='white' font-family='Arial' font-weight='700'>π</text></svg>">
-  <style>
-    :root{
-      --bg:#f6fbff; --card:#ffffff; --muted:#64748b; --accent:#1867b4; --accent-2:#6c5ce7; --success:#16a34a;
-      font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      color-scheme: light;
-    }
-    html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7fbff,#eef6fb);color:#073044}
-    .wrap{max-width:980px;margin:24px auto;padding:18px}
-    header{display:flex;align-items:center;gap:14px}
-    .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(180deg,var(--accent-2),var(--accent));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:20px}
-    h1{margin:0;font-size:20px}
-    p.lead{margin:6px 0 18px;color:var(--muted)}
-    .grid{display:grid;grid-template-columns:1fr;gap:16px}
-    .card{background:var(--card);border-radius:12px;padding:16px;box-shadow:0 8px 20px rgba(10,20,30,0.06)}
-    .product{display:flex;gap:12px;align-items:center}
-    .thumb{width:120px;height:100px;border-radius:10px;background:linear-gradient(180deg,#e6f2ff,#cfeaff);display:flex;align-items:center;justify-content:center;font-weight:700;color:#083d62}
-    .price{font-weight:700;font-size:20px;color:#083d62}
-    button.btn{background:var(--accent);color:#fff;border:0;padding:12px 14px;border-radius:10px;font-weight:600;cursor:pointer}
-    button.ghost{background:transparent;border:1px solid rgba(0,0,0,0.06);color:var(--muted);padding:10px 12px;border-radius:10px}
-    .controls{display:flex;gap:10px;flex-wrap:wrap}
-    .status{margin-top:10px;padding:10px;border-radius:8px;background:#e8f6ff;color:#064b6f}
-    #log{margin-top:12px;background:#071427;padding:12px;border-radius:8px;color:#bfe8ff;font-family:monospace;white-space:pre-wrap;max-height:260px;overflow:auto}
-    .muted{color:var(--muted);font-size:14px}
-    .receipt{max-width:720px;margin:14px auto;padding:12px;border-radius:12px;background:linear-gradient(180deg,#fff,#fbfeff);box-shadow:0 10px 30px rgba(10,20,30,0.06)}
-    .tx{font-family:monospace;word-break:break-all;color:#003b5c}
-    @media(min-width:720px){.grid{grid-template-columns:1fr 360px}}
-    .hidden{display:none}
-    .spinner{width:18px;height:18px;border-radius:50%;border:3px solid rgba(255,255,255,0.2);border-top-color:rgba(255,255,255,0.9);animation:spin .9s linear infinite;display:inline-block;vertical-align:middle}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    .success-badge{display:inline-block;padding:6px 10px;background:linear-gradient(90deg,#dafbe7,#bff3d8);color:var(--success);border-radius:999px;font-weight:600}
-    a.small{color:var(--accent-2);text-decoration:none}
-    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>StorePi — Inter Fan Shop</title>
+<meta name="description" content="StorePi — demo shop to buy digital stickers with Pi. Inter-inspired theme." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23000a1a' width='100' height='100' rx='18'/><text x='50' y='58' font-size='50' text-anchor='middle' fill='%230a84ff' font-family='Arial' font-weight='700'>π</text></svg>">
+<style>
+  :root{
+    --bg-dark:#02040a;
+    --bg-mid:#07112a;
+    --card:#06172b;
+    --muted:#9db7d0;
+    --accent:#003d7a;   /* deep Inter blue */
+    --accent-2:#0a84ff; /* electric blue */
+    --gold:#ffc857;
+    --radius:14px;
+    --glass: rgba(255,255,255,0.02);
+    --success:#16a34a;
+    color-scheme: dark;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-dark),var(--bg-mid));color:var(--muted);-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1100px;margin:20px auto;padding:18px}
+  .header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+  .logo{width:64px;height:64px;border-radius:12px;background:linear-gradient(180deg,var(--accent-2),var(--accent));display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:26px;box-shadow:0 10px 30px rgba(0,0,0,0.6)}
+  h1{margin:0;font-size:20px;color:#cfe7ff}
+  .lead{margin:4px 0;color:#82a7c6;font-size:13px}
+  .grid{display:grid;grid-template-columns:1fr;gap:16px}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:18px;border-radius:var(--radius);box-shadow:0 10px 40px rgba(0,0,0,0.6)}
+  .product{display:flex;gap:14px;align-items:center}
+  .thumb{width:140px;height:110px;border-radius:12px;background:linear-gradient(180deg,#071a3a,#021127);display:flex;align-items:center;justify-content:center;color:var(--accent-2);font-weight:800;font-size:44px}
+  .product-info{flex:1}
+  .price{font-weight:800;font-size:20px;color:var(--accent-2)}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+  .btn{background:var(--accent);border:0;color:white;padding:12px 14px;border-radius:10px;font-weight:700;cursor:pointer;box-shadow:0 8px 22px rgba(2,6,23,0.6)}
+  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+  .status{margin-top:12px;padding:10px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));color:#d9f6ff}
+  .log{margin-top:12px;background:rgba(2,6,23,0.6);padding:12px;border-radius:10px;color:#9fd6ff;font-family:monospace;white-space:pre-wrap;max-height:300px;overflow:auto}
+  .right{display:none}
+  .footer{margin-top:16px;text-align:center;color:#88b0d0;font-size:13px}
+  .receipt{margin-top:12px;padding:12px;border-radius:10px;background:linear-gradient(180deg,#02223f,#021427);color:#dff6ff}
+  .tx{font-family:monospace;word-break:break-all;color:#9fd6ff}
+  .badge{display:inline-block;padding:6px 10px;border-radius:999px;background:linear-gradient(90deg,#073b70,#0a84ff);color:white;font-weight:700}
+  .hidden{display:none}
+  .note{margin-top:10px;color:#8fa8c6;font-size:13px}
+  @media(min-width:860px){
+    .grid{grid-template-columns:1fr 360px}
+    .right{display:block}
+  }
+</style>
 </head>
 <body>
   <div class="wrap">
-    <header>
+    <div class="header">
       <div class="logo" aria-hidden="true">SP</div>
       <div>
-        <h1>StorePi</h1>
-        <p class="lead">Buy a demo item with Pi — secure server approval flow. Open in <strong>Pi Browser</strong> to test live payments.</p>
+        <h1>StorePi — Inter Fan Shop</h1>
+        <div class="lead">Buy a demo sticker pack with Pi — server-approved flow. Open in <strong>Pi Browser</strong> to test real payments.</div>
       </div>
-    </header>
+      <div style="margin-left:auto"><span class="badge">Demo</span></div>
+    </div>
 
-    <main class="grid" role="main">
-      <!-- product card -->
-      <section class="card" aria-labelledby="productTitle">
+    <div class="grid">
+      <main class="card" aria-labelledby="productTitle">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <div>
-            <div class="muted">Featured product</div>
-            <div id="productTitle" style="font-size:18px;font-weight:700">Digital Sticker Pack</div>
+            <div class="small">Featured</div>
+            <div id="productTitle" style="font-size:18px;font-weight:800;color:#dff6ff">Digital Sticker Pack — Nerazzurri</div>
           </div>
           <div class="price">0.01 Pi</div>
         </div>
 
         <div style="height:12px"></div>
 
-        <div class="product" aria-hidden="false">
-          <div class="thumb" aria-hidden="true">🟣</div>
-          <div style="flex:1">
-            <div class="muted">Colorful stickers for chats and profiles. Delivered instantly after payment.</div>
-            <div style="height:8px"></div>
+        <div class="product">
+          <div class="thumb" aria-hidden="true">⚽</div>
+          <div class="product-info">
+            <div style="color:var(--muted)">A curated pack of Inter-inspired stickers — perfect for chat and profiles. Instant delivery after payment.</div>
             <div class="controls" role="group" aria-label="Actions">
-              <button id="buyBtn" class="btn" aria-label="Buy for 0.01 Pi">Buy with Pi — 0.01</button>
-              <button id="authBtn" class="ghost" aria-label="Authorize app">Authorize (payments)</button>
-              <button id="checkBtn" class="ghost" aria-label="Check Pi SDK">Check SDK</button>
+              <button id="payBtn" class="btn" aria-label="Buy 0.01 Pi">Buy 0.01 Pi</button>
+              <button id="authBtn" class="btn ghost" aria-label="Authorize app">Authorize (payments)</button>
+              <button id="checkBtn" class="btn ghost" aria-label="Check SDK">Check SDK</button>
             </div>
           </div>
         </div>
 
-        <div id="status" class="status" aria-live="polite">Status: idle</div>
-        <div id="log" aria-live="polite">Logs will appear here...</div>
-      </section>
+        <div id="status" class="status">Status: idle</div>
 
-      <!-- right: receipt & help -->
-      <aside class="card" aria-labelledby="helpTitle">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div><strong id="helpTitle">Quick Help</strong></div>
-          <div class="muted">Mobile-first • Accessible</div>
-        </div>
+        <div id="log" class="log">Logs will appear here...</div>
 
-        <div style="margin-top:10px">
-          <div class="muted">Server approval</div>
-          <p style="margin:0">When a payment reaches “ready for approval”, the app asks the server to approve. The server must approve quickly (60s) or the SDK will show “Payment Expired”.</p>
-        </div>
+        <div class="note">Made with <span style="color:#0a84ff">💙</span> — Forza Inter!</div>
+      </main>
 
-        <div style="height:12px"></div>
-
-        <div id="receipt" class="receipt hidden" aria-hidden="true" role="region" aria-label="Receipt">
+      <aside class="right">
+        <div class="card">
           <div style="display:flex;justify-content:space-between;align-items:center">
-            <div><strong>Receipt</strong></div>
-            <div class="success-badge">Paid</div>
+            <div><strong>Receipt Center</strong></div>
+            <div class="small">Quick support</div>
           </div>
+
+          <div id="receipt" class="receipt hidden" aria-hidden="true">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div><strong>Receipt</strong></div>
+              <div class="badge">Paid</div>
+            </div>
+            <div style="height:8px"></div>
+            <div class="small">Item: Digital Sticker Pack</div>
+            <div style="height:8px"></div>
+            <div>Amount: <strong>0.01 Pi</strong></div>
+            <div style="height:8px"></div>
+            <div>Payment ID: <div class="tx" id="paymentId"></div></div>
+            <div style="height:8px"></div>
+            <div>Tx ID: <div class="tx" id="txid"></div></div>
+            <div style="height:8px"></div>
+            <div><a id="txlink" class="small" target="_blank" rel="noreferrer">View on Testnet</a></div>
+            <div style="height:10px"></div>
+            <div style="display:flex;gap:8px">
+              <button id="closeReceipt" class="btn ghost">Close</button>
+              <button id="manualComplete" class="btn">Force Complete</button>
+            </div>
+          </div>
+
+          <div style="height:12px"></div>
+          <div class="small">Server endpoint:</div>
+          <div class="small"><code>/api/approve-payment</code></div>
           <div style="height:8px"></div>
-          <div class="muted">Item: Digital Sticker Pack</div>
-          <div style="height:6px"></div>
-          <div>Amount: <strong>0.01 Pi</strong></div>
-          <div style="height:6px"></div>
-          <div>Payment ID: <div class="tx" id="receiptId"></div></div>
-          <div style="height:6px"></div>
-          <div>Tx ID: <div class="tx"><a id="txLink" class="small" target="_blank" rel="noreferrer noopener"></a></div></div>
-          <div style="height:10px"></div>
-          <button id="closeReceipt" class="ghost" style="width:100%">Close</button>
+          <div class="small">Env: <code>PI_API_KEY</code> (Vercel)</div>
         </div>
-
-        <div style="height:12px"></div>
-
-        <div class="muted" style="font-size:13px">Developer notes:</div>
-        <ul style="margin:6px 0 0 16px;color:var(--muted);font-size:14px">
-          <li>Server endpoint: <code>/api/approve-payment</code></li>
-          <li>Env var: <code>PI_API_KEY</code> (Vercel) and <code>ADMIN_TOKEN</code> (optional)</li>
-        </ul>
       </aside>
-    </main>
+    </div>
 
-    <footer style="text-align:center;color:var(--muted);padding-top:18px">Made with ❤️ — StorePi demo</footer>
+    <div class="footer">© StorePi Demo — built with <span style="color:#0a84ff">💙</span></div>
   </div>
 
 <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 <script>
-/* ---------- configuration ---------- */
-const ADMIN_TOKEN = 'REPLACE_WITH_ADMIN_TOKEN_IN_VERSEL_ENV'; // we will read real token from runtime header below
 /* ---------- UI helpers ---------- */
-const statusEl = document.getElementById('status');
 const logEl = document.getElementById('log');
-const buyBtn = document.getElementById('buyBtn');
+const statusEl = document.getElementById('status');
+const payBtn = document.getElementById('payBtn');
 const authBtn = document.getElementById('authBtn');
 const checkBtn = document.getElementById('checkBtn');
-const receiptEl = document.getElementById('receipt');
-const receiptIdEl = document.getElementById('receiptId');
-const txLinkEl = document.getElementById('txLink');
+const receipt = document.getElementById('receipt');
+const paymentIdEl = document.getElementById('paymentId');
+const txidEl = document.getElementById('txid');
+const txlink = document.getElementById('txlink');
 const closeReceipt = document.getElementById('closeReceipt');
+const manualComplete = document.getElementById('manualComplete');
 
-function time(){ return new Date().toISOString(); }
-function appendLog(...parts){
-  const text = parts.map(p => (typeof p==='object'?JSON.stringify(p):String(p))).join(' ');
-  const line = time() + '  ' + text;
+function stamp(){ return new Date().toISOString(); }
+function appendLog(...args){
+  const text = args.map(a => (typeof a==='object' ? JSON.stringify(a) : String(a))).join(' ');
+  const line = stamp() + '  ' + text;
   logEl.textContent = line + '\\n' + logEl.textContent;
-  console.log(...parts);
+  console.log(...args);
 }
 function setStatus(s){ statusEl.textContent = 'Status: ' + s; appendLog('STATUS', s); }
-function showReceipt(paymentId, txid){
-  receiptEl.classList.remove('hidden'); receiptEl.setAttribute('aria-hidden','false');
-  receiptIdEl.textContent = paymentId;
-  txLinkEl.href = txid ? ('https://api.testnet.minepi.com/transactions/' + txid) : '#';
-  txLinkEl.textContent = txid || '(no tx)';
-}
-function hideReceipt(){ receiptEl.classList.add('hidden'); receiptEl.setAttribute('aria-hidden','true'); }
-closeReceipt.onclick = hideReceipt;
+function showReceipt(pid, tx){ receipt.classList.remove('hidden'); receipt.setAttribute('aria-hidden','false'); paymentIdEl.textContent = pid; txidEl.textContent = tx || '(none)'; txlink.href = tx ? ('https://api.testnet.minepi.com/transactions/' + tx) : '#'; }
+function hideReceipt(){ receipt.classList.add('hidden'); receipt.setAttribute('aria-hidden','true'); }
 
 /* ---------- init Pi SDK ---------- */
 try {
   if (typeof Pi !== 'undefined' && typeof Pi.init === 'function') {
-    Pi.init({ version: '2.0' });
-    appendLog('✅ Pi SDK initialized');
+    Pi.init({ version: "2.0" });
+    appendLog('✅ Pi SDK initialized (if in Pi Browser)');
   } else {
-    appendLog('Pi object missing (open in Pi Browser)');
+    appendLog('Pi object missing — open this app inside Pi Browser for real payments.');
   }
 } catch(e){ appendLog('Pi.init error', e); }
 
@@ -177,83 +182,67 @@ checkBtn.addEventListener('click', () => {
 
 /* ---------- authorize ---------- */
 authBtn.addEventListener('click', async () => {
-  if (typeof Pi === 'undefined') { appendLog('Open in Pi Browser to authorize'); alert('Open this page in Pi Browser to authorize'); return; }
+  if (typeof Pi === 'undefined'){ alert('Open this page in the Pi Browser to authorize'); return; }
   setStatus('Authenticating (requesting payments scope)...');
   appendLog('Calling Pi.authenticate with scopes ["payments"]');
   try {
-    const user = await Pi.authenticate(['payments'], (incomplete) => appendLog('authenticate incomplete callback', incomplete));
-    appendLog('authenticate resolved', user);
+    const res = await Pi.authenticate(['payments'], function(incomplete){ appendLog('authenticate incomplete callback', incomplete); });
+    appendLog('authenticate resolved:', res);
     setStatus('Authorized');
+    alert('Authorized — you can now make payments.');
   } catch(err) {
-    appendLog('Auth error', err || '{}');
+    appendLog('Auth error', err);
     setStatus('Auth failed');
-    alert('Authorization failed. Try opening the app from Pi Browser -> My Apps and try again.');
+    alert('Authorization failed. Re-open from My Apps and try again.');
   }
 });
 
-/* ---------- server call helper (reads response safely) ---------- */
-async function postApprove(paymentId, txid = null){
-  // ADMIN_TOKEN is stored in Vercel and injected into the page via server-side render? 
-  // We can't read server env directly from static HTML; we rely on function to allow calls from here without admin token or you can set a short frontend token if you want.
+/* ---------- server approve helper ---------- */
+async function serverApprove(paymentId, txid = null) {
   try {
     const body = { paymentId };
     if (txid) body.txid = txid;
-    // Send admin token header if you configured it in project; it's optional.
-    const headers = { 'Content-Type': 'application/json' };
-    const adminToken = ''; // intentionally blank — if you set ADMIN_TOKEN in env and want client to send it, replace '' with actual value at build-time with server-side rendering, or use safe admin panel.
-    if (adminToken) headers['X-ADMIN-TOKEN'] = adminToken;
-
-    const r = await fetch('/api/approve-payment', { method:'POST', headers, body: JSON.stringify(body) });
+    const r = await fetch('/api/approve-payment', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(body) });
     const text = await r.text();
-    try { return { status: r.status, ok: r.ok, body: JSON.parse(text) }; } catch(e) { return { status: r.status, ok: r.ok, body: { raw: text } }; }
-  } catch(e){
-    return { status: 0, ok:false, error: String(e) };
+    appendLog('/api/approve-payment response', r.status, text);
+    return { ok: r.ok, status: r.status, raw: text };
+  } catch(e) {
+    appendLog('serverApprove error', e);
+    return { ok:false, error: String(e) };
   }
 }
 
 /* ---------- buy flow ---------- */
-buyBtn.addEventListener('click', async () => {
+payBtn.addEventListener('click', async () => {
   hideReceipt();
-  if (typeof Pi === 'undefined' || typeof Pi.createPayment !== 'function'){ appendLog('Pi.createPayment not available; open Pi Browser and authorize'); alert('Open in Pi Browser and authorize first'); return; }
-
+  if (typeof Pi === 'undefined' || typeof Pi.createPayment !== 'function'){ alert('Open in Pi Browser and authorize first.'); return; }
   setStatus('Creating payment...');
   appendLog('about to call Pi.createPayment (server-approve flow)');
-
-  const payload = { amount: 0.01, memo: 'StorePi Demo Payment', metadata: { productId: 'stickers-001' } };
+  const payload = { amount: 0.01, memo: 'StorePi Demo Payment', metadata:{ productId:'stickers-001' } };
 
   const callbacks = {
     onReadyForServerApproval: async function(paymentId){
       appendLog('onReadyForServerApproval', paymentId);
       setStatus('Ready for approval: ' + paymentId);
-
-      // Ask server to approve immediately (no txid yet)
+      // Immediately request server approve (no txid yet)
       setStatus('Requesting server approval...');
-      const res = await postApprove(paymentId, null);
-      appendLog('Server approve response', res.status, res.body || res.error);
-      if (!res.ok) {
-        setStatus('Server approval failed');
-        alert('Server approval failed. You can retry or contact support.');
-      } else {
-        setStatus('Server approved — waiting for completion');
-      }
+      const res = await serverApprove(paymentId, null);
+      if (res.ok) setStatus('Server approved — waiting for completion');
+      else setStatus('Server approval failed');
     },
-
-    onReadyForServerCompletion: async function(paymentId, txid){
+    onReadyForServerCompletion: function(paymentId, txid){
       appendLog('onReadyForServerCompletion', paymentId, txid);
       setStatus('Payment completed');
-      // After completion, also inform server of txid so it can mark complete if needed
-      const res = await postApprove(paymentId, txid);
-      appendLog('Server complete response', res.status, res.body || res.error);
       showReceipt(paymentId, txid);
+      // Also notify server with txid to ensure completion persisted
+      serverApprove(paymentId, txid).then(r => appendLog('serverApprove (post-tx) result', r));
     },
-
-    onCancel: (paymentId) => {
+    onCancel: function(paymentId){
       appendLog('onCancel', paymentId);
       setStatus('Payment canceled');
-      alert('You cancelled the payment.');
+      alert('Payment canceled by user.');
     },
-
-    onError: (err, payment) => {
+    onError: function(err, payment){
       appendLog('onError', err, payment);
       setStatus('Payment error');
       alert('Payment error — check logs.');
@@ -266,9 +255,26 @@ buyBtn.addEventListener('click', async () => {
   } catch(e) {
     appendLog('createPayment threw', e);
     setStatus('createPayment threw error');
-    alert('Error creating payment: ' + String(e));
+    alert('Error creating payment: ' + (e && e.message ? e.message : String(e)));
   }
 });
+
+/* ---------- manual complete button ---------- */
+manualComplete.addEventListener('click', async () => {
+  const pid = paymentIdEl.textContent || prompt('Enter paymentId to complete:');
+  if (!pid) return;
+  try {
+    const r = await fetch('/api/manual-complete?paymentId=' + encodeURIComponent(pid));
+    const text = await r.text();
+    appendLog('manual-complete', r.status, text);
+    alert('manual-complete result: ' + text);
+  } catch(e) {
+    appendLog('manual-complete error', e);
+    alert('Error');
+  }
+});
+
+closeReceipt.addEventListener('click', hideReceipt);
 </script>
 </body>
 </html>
