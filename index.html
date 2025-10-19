@@ -3,270 +3,388 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>StorePi — Polished Demo</title>
-<meta name="description" content="StorePi — polished demo: accepts Pi payments, production-ready flow, minimal commission marketplace-ready." />
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23001120' width='100' height='100' rx='20'/%3E%3Ctext x='50' y='62' font-size='48' text-anchor='middle' fill='%230083d6' font-family='Arial'%3E%CF%80%3C/text%3E%3C/svg%3E">
+<title>StorePi Demo — Server Approve</title>
+<!-- Pi SDK (real) -->
+<script src="https://sdk.minepi.com/pi-sdk.js" defer></script>
+
 <style>
-:root{
-  --bg-a:#030617;    /* very dark navy */
-  --bg-b:#06122a;    /* deeper blue */
-  --panel:#071427;
-  --accent:#0a84ff;  /* electric */
-  --deep:#002147;    /* Inter-like deep */
-  --muted:#93adc1;
-  --white:#eaf6ff;
-  --tiny-yellow: rgba(255,200,80,0.12); /* barely-there */
-  --card-border: rgba(255,255,255,0.02);
-  --radius:14px;
-  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  color-scheme: dark;
-}
-*{box-sizing:border-box}
-html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-a),var(--bg-b));color:var(--white);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
-.container{max-width:1100px;margin:28px auto;padding:20px}
-.header{display:flex;align-items:center;gap:14px;padding:14px;border-radius:14px;background:linear-gradient(90deg,#021724,#061428);box-shadow:0 14px 40px rgba(2,8,20,0.6);border:1px solid var(--card-border)}
-.logo{width:64px;height:64px;border-radius:12px;background:linear-gradient(180deg,var(--deep),var(--accent));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;color:#eaf6ff;box-shadow:0 10px 30px rgba(0,0,0,0.45)}
-.title h1{margin:0;font-size:20px}
-.title p{margin:4px 0 0;color:var(--muted);font-size:13px}
-.controls{margin-left:auto;display:flex;align-items:center;gap:10px}
+  /* ===== Typography & base ===== */
+  :root{
+    --bg:#071327;           /* page bg (deep) */
+    --card:#081826;         /* dark card background */
+    --panel:#0b1a2a;        /* slightly lighter */
+    --text:#eaf6ff;         /* soft white */
+    --muted:#a7bbcc;        /* muted */
+    --accent-blue:#0f6fff;  /* Inter-ish blue */
+    --accent-dark:#031026;
+    --gold:#e0a401;         /* small yellow accent */
+    --glass: rgba(255,255,255,0.03);
+    --radius:14px;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+  html,body{height:100%;margin:0;background:linear-gradient(180deg,#06111a 0%, #071327 100%);color:var(--text);}
+  .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+  .frame{
+    width:100%;max-width:420px;border-radius:28px;padding:18px;background:
+      linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    box-shadow: 0 12px 40px rgba(3,8,18,0.6), inset 0 -1px 0 rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.03);
+  }
 
-/* layout */
-.grid{display:grid;grid-template-columns:1fr;gap:18px;margin-top:18px}
-@media(min-width:980px){ .grid{grid-template-columns:1fr 360px} }
+  header{display:flex;align-items:center;gap:12px}
+  .logo {
+    width:52px;height:52px;border-radius:12px;background:linear-gradient(180deg,var(--accent-blue),#0d4fd5);
+    display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:22px;
+    box-shadow: 0 6px 18px rgba(15,111,255,0.18);
+  }
+  .brand {flex:1}
+  .brand h1{margin:0;font-size:18px;font-weight:700;}
+  .brand p{margin:0;color:var(--muted);font-size:12px}
+  .createBtn{background:linear-gradient(180deg,var(--gold),#d68b00);color:#051027;padding:10px 14px;border-radius:12px;border:0;font-weight:600;cursor:pointer;box-shadow:0 8px 18px rgba(224,164,1,0.12)}
 
-.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.008));border-radius:14px;padding:18px;box-shadow:0 12px 40px rgba(0,0,0,0.5);border:1px solid var(--card-border)}
-.headline{font-size:20px;color:var(--accent);margin:0}
-.lead{color:var(--muted);margin-top:6px}
+  /* hero / stats */
+  .hero{margin-top:16px;background:linear-gradient(180deg, rgba(15,111,255,0.06), rgba(255,255,255,0.01)); padding:16px;border-radius:16px;display:flex;gap:12px;align-items:center}
+  .bigHeart{width:64px;height:64px;border-radius:14px;background:linear-gradient(180deg,#0f6fff,#0a4fd1);display:flex;align-items:center;justify-content:center;color:white;font-size:28px;box-shadow:0 8px 30px rgba(15,111,255,0.14)}
+  .heroText h2{margin:0;font-size:18px}
+  .heroText p{margin:6px 0 0;color:var(--muted);font-size:13px}
 
-/* product */
-.product{display:flex;gap:16px;align-items:center;margin-top:14px}
-.thumb{width:140px;height:110px;border-radius:12px;background:linear-gradient(180deg,#04263e,#05314a);display:flex;align-items:center;justify-content:center;font-size:44px;color:var(--accent);font-weight:900;box-shadow:0 8px 26px rgba(0,0,0,0.5)}
-.info h3{margin:0;color:#dff6ff;font-size:16px}
-.info p{margin:8px 0 0;color:var(--muted);font-size:14px}
-.price{font-weight:900;color:var(--accent);font-size:18px;margin-top:8px}
+  .search{margin-top:14px;display:flex;gap:8px;align-items:center}
+  .search input{
+    flex:1;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);
+    background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));color:var(--text);
+  }
+  .search .clip{width:46px;height:46px;border-radius:10px;background:var(--gold);display:flex;align-items:center;justify-content:center;color:#051027;font-weight:700}
 
-/* actions */
-.actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
-.btn{background:linear-gradient(180deg,var(--accent),#066fd6);border:0;color:white;padding:12px 16px;border-radius:10px;font-weight:800;cursor:pointer;box-shadow:0 10px 26px rgba(8,18,40,0.45);transition:transform .12s ease,box-shadow .12s ease}
-.btn:active{transform:translateY(1px)}
-.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
-.badge{padding:6px 8px;border-radius:999px;background:var(--tiny-yellow);color:var(--muted);font-weight:700;font-size:12px;border:1px solid rgba(255,200,80,0.06)}
-.status{margin-top:12px;padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);color:var(--accent);display:inline-block}
-.log{margin-top:12px;background:linear-gradient(180deg,#071227,#041726);padding:12px;border-radius:10px;color:#9fdcff;font-family:monospace;white-space:pre-wrap;max-height:340px;overflow:auto}
+  /* cards row */
+  .cards{display:flex;gap:12px;margin-top:14px}
+  .stat{flex:1;background:var(--glass);padding:12px;border-radius:12px;min-height:80px;display:flex;flex-direction:column;justify-content:center}
+  .stat strong{font-size:20px;display:block}
+  .stat small{color:var(--muted);font-size:12px}
 
-/* side */
-.side{position:sticky;top:20px}
-.receipt{border-radius:12px;padding:14px;background:linear-gradient(180deg,#052331,#042c38);border:1px solid rgba(255,255,255,0.02)}
-.receipt h4{margin:0;color:var(--accent)}
-.receipt .meta{color:var(--muted);font-size:13px;margin-top:8px}
-.tx{font-family:monospace;color:var(--accent);word-break:break-all;margin-top:6px}
+  /* product list */
+  .sectionTitle{margin-top:18px;display:flex;align-items:center;justify-content:space-between}
+  .sectionTitle h3{margin:0}
+  .grid{display:flex;gap:12px;margin-top:12px;overflow:auto;padding-bottom:12px}
+  .cardItem{min-width:160px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:14px;padding:10px;border:1px solid rgba(255,255,255,0.03)}
+  .cardItem .img{height:100px;background:linear-gradient(180deg,#0b1a2a,#071327);border-radius:10px}
+  .price{margin-top:8px;color:var(--gold);font-weight:700}
 
-/* demo toggle */
-.switch{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03);cursor:pointer}
-.switch input{display:none}
-.small{font-size:13px;color:var(--muted)}
+  /* action row */
+  .actions{display:flex;gap:8px;margin-top:18px;align-items:center}
+  .btn {padding:10px 12px;border-radius:12px;border:0;cursor:pointer;font-weight:600}
+  .btn-primary{background:linear-gradient(180deg,var(--accent-blue),#0a58ff);color:white;box-shadow:0 8px 24px rgba(15,111,255,0.12)}
+  .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.03);color:var(--text)}
 
-/* micro */
-.hidden{display:none}
-.pulse{animation:pulse 2.6s infinite}
-@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.02)}100%{transform:scale(1)}}
-.footer{margin-top:18px;text-align:center;color:var(--muted)}
+  /* debug console */
+  #status{margin-top:14px;padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);color:var(--muted)}
+  #log{margin-top:10px;background:#041026;padding:12px;border-radius:10px;height:160px;overflow:auto;font-family:monospace;color:#bfe6ff;font-size:12px}
+
+  footer{margin-top:14px;color:var(--muted);font-size:12px;text-align:center;padding-bottom:8px}
+  footer .made{color:var(--muted)} footer .heart{color:#0f6fff;font-weight:700;margin-left:6px}
+
+  /* small responsiveness */
+  @media (max-width:420px){
+    .cards{flex-direction:row}
+  }
+
+  /* subtle animations */
+  .fade-up { transform: translateY(10px); opacity: 0; animation: fadeUp .5s forwards; }
+  @keyframes fadeUp { to { transform: none; opacity:1; } }
 </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <div class="logo" aria-hidden="true">SP</div>
-      <div class="title">
+<div class="wrap">
+  <div class="frame fade-up" role="main" aria-live="polite">
+    <header>
+      <div class="logo" aria-hidden>💙</div>
+      <div class="brand">
         <h1>StorePi</h1>
-        <p class="small">Polished demo store — marketplace-ready</p>
+        <p>Pi-native marketplace — demo</p>
       </div>
+      <button class="createBtn" id="createStoreBtn">+ Create Store</button>
+    </header>
 
-      <div class="controls">
-        <div class="badge small">DEMO</div>
-        <label class="switch" title="Toggle demo behavior (mock SDK)">
-          <input id="demoMode" type="checkbox" checked>
-          <span id="demoLabel" class="small">Demo mode: ON</span>
-        </label>
+    <div class="hero">
+      <div class="bigHeart" aria-hidden>💙</div>
+      <div class="heroText">
+        <h2>Sell & Accept Pi — Demo</h2>
+        <p>Accept Pi test payments instantly. Designed for mobile-first, polished UI.</p>
       </div>
     </div>
 
-    <div class="grid" role="main">
-      <main class="card" aria-labelledby="mainTitle">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div>
-            <h2 id="mainTitle" class="headline">A clean market flow — ready for sellers</h2>
-            <div class="lead">Simple, trusted payment flow — buyer pays with Pi; you approve and credit sellers.</div>
-          </div>
-          <div style="text-align:right">
-            <div class="price">0.01 Pi</div>
-            <div class="small" style="color:var(--muted)">Testnet</div>
-          </div>
-        </div>
-
-        <div class="product">
-          <div class="thumb" aria-hidden="true">🛍️</div>
-          <div class="info">
-            <h3>StorePi demo listing</h3>
-            <p class="meta">No items sold here — this app is a marketplace platform for third-party sellers. Commission and seller flows are configurable.</p>
-
-            <div class="actions">
-              <button id="payBtn" class="btn pulse">Buy — 0.01 Pi</button>
-              <button id="authBtn" class="btn ghost">Authorize (payments)</button>
-              <button id="checkBtn" class="btn ghost">Check SDK</button>
-              <button id="pingBtn" class="btn ghost">Ping Server</button>
-            </div>
-
-            <div id="status" class="status">Status: idle</div>
-            <div id="log" class="log" aria-live="polite">Logs will appear here — Demo Mode is ON by default for testing.</div>
-          </div>
-        </div>
-      </main>
-
-      <aside class="side">
-        <div class="receipt card" id="receipt" aria-hidden="true">
-          <h4>Receipt & actions</h4>
-          <div class="meta" id="receiptMsg">No purchases yet — use Buy to test the flow.</div>
-
-          <div style="height:10px"></div>
-          <div class="small">Payment ID</div>
-          <div class="tx" id="paymentId">—</div>
-
-          <div style="height:8px"></div>
-          <div class="small">Tx ID</div>
-          <div class="tx" id="tx">—</div>
-
-          <div style="height:12px"></div>
-          <div style="display:flex;gap:8px">
-            <button id="openTx" class="btn ghost">Open on Testnet</button>
-            <button id="manualComplete" class="btn">Force Complete</button>
-          </div>
-        </div>
-      </aside>
+    <div class="search">
+      <input id="search" placeholder="Search stores, products, creators..." />
+      <div class="clip">π</div>
     </div>
 
-    <div class="footer">Made with <span style="color:var(--accent)">💙</span> — Forza Inter!</div>
+    <div class="cards">
+      <div class="stat"><strong>2.4K</strong><small>Active Stores</small></div>
+      <div class="stat"><strong>15K</strong><small>Products</small></div>
+      <div class="stat"><strong>850K</strong><small>Total Pi Sold</small></div>
+    </div>
+
+    <div class="sectionTitle">
+      <h3>Trending Now</h3>
+      <a href="#" style="color:var(--gold);font-weight:700;font-size:14px">View All</a>
+    </div>
+
+    <div class="grid" id="products">
+      <div class="cardItem">
+        <div class="img"></div>
+        <div style="margin-top:8px;font-weight:700">Pro Course</div>
+        <div style="color:var(--muted);font-size:13px">EduPi</div>
+        <div class="price">50 π</div>
+      </div>
+      <div class="cardItem">
+        <div class="img"></div>
+        <div style="margin-top:8px;font-weight:700">Wireless Earbuds</div>
+        <div style="color:var(--muted);font-size:13px">Tech Hub</div>
+        <div class="price">25 π</div>
+      </div>
+      <div class="cardItem">
+        <div class="img"></div>
+        <div style="margin-top:8px;font-weight:700">Digital Poster</div>
+        <div style="color:var(--muted);font-size:13px">Creator</div>
+        <div class="price">5 π</div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary" id="checkSdk">Check SDK</button>
+      <button class="btn btn-primary" id="authorize">Authorize (payments)</button>
+      <button class="btn btn-primary" id="payBtn" disabled>Test Payment 0.01 Pi</button>
+      <button class="btn btn-ghost" id="pingServer">Ping Server</button>
+    </div>
+
+    <div id="status">Status: idle</div>
+    <div id="log">(logs will appear here)</div>
+
+    <footer>
+      <div class="made">Made with <span class="heart">💙</span> — Forza Inter!</div>
+    </footer>
   </div>
+</div>
 
-<script src="https://sdk.minepi.com/pi-sdk.js"></script>
 <script>
-/* ===== StorePi single-file frontend (refined colors) ===== */
+/*
+  StorePi Demo index.html
+  - Works with real Pi Browser SDK and server-approve flows
+  - Paste this file into your index.html and deploy.
+*/
+
+/* ---------- Utilities ---------- */
 const logEl = document.getElementById('log');
 const statusEl = document.getElementById('status');
+const checkBtn = document.getElementById('checkSdk');
+const authBtn = document.getElementById('authorize');
 const payBtn = document.getElementById('payBtn');
-const authBtn = document.getElementById('authBtn');
-const checkBtn = document.getElementById('checkBtn');
-const pingBtn = document.getElementById('pingBtn');
-const demoCheckbox = document.getElementById('demoMode');
-const demoLabel = document.getElementById('demoLabel');
+const pingBtn = document.getElementById('pingServer');
 
-const receiptPanel = document.getElementById('receipt');
-const receiptMsg = document.getElementById('receiptMsg');
-const paymentIdEl = document.getElementById('paymentId');
-const txEl = document.getElementById('tx');
-const openTx = document.getElementById('openTx');
-const manualComplete = document.getElementById('manualComplete');
-
-function ts(){ return new Date().toISOString(); }
-function appendLog(...args){ const s = args.map(a => (typeof a==='object' ? JSON.stringify(a) : String(a))).join(' '); const line = ts() + '  ' + s; logEl.textContent = line + '\\n' + logEl.textContent; console.log(...args); }
-function setStatus(t){ statusEl.textContent = 'Status: ' + t; appendLog('STATUS', t); }
-function showReceipt(pid, tx, msg){ receiptPanel.removeAttribute('aria-hidden'); receiptMsg.textContent = msg || 'Payment completed'; paymentIdEl.textContent = pid || '—'; txEl.textContent = tx || '—'; openTx.onclick = ()=> { if(tx) window.open('https://api.testnet.minepi.com/transactions/' + tx, '_blank'); else alert('No txid'); }; }
-
-/* ------ Demo (mock) Pi SDK for easy testing ------ */
-function installMockPi(){
-  if (window.Pi && typeof window.Pi.createPayment === 'function') return;
-  window.Pi = {
-    _token:'mock-access-token',
-    init(){ appendLog('Mock Pi.init'); },
-    authenticate: function(scopes, incompleteCb){ appendLog('Mock authenticate', scopes); return new Promise(res => setTimeout(()=>{ try{ if (typeof incompleteCb === 'function') incompleteCb(false); }catch(e){} res({ user:{ app_id:'demo-app', uid:'demo-user', credentials:{ scopes, valid_until:{ iso8601:'2099-01-01T00:00:00Z' } }, receiving_email:true }, accessToken:this._token }); }, 450)); },
-    createPayment: function(data, cbs){ appendLog('Mock createPayment', data); const pid = 'MOCK-'+Math.random().toString(36).slice(2,9); setTimeout(()=>{ if(cbs && cbs.onReadyForServerApproval) cbs.onReadyForServerApproval(pid); },700); setTimeout(()=>{ const tx='MOCKTX-'+Math.random().toString(36).slice(2,11); if(cbs && cbs.onReadyForServerCompletion) cbs.onReadyForServerCompletion(pid, tx); },2000); },
-    approvePayment(pid){ appendLog('Mock approvePayment', pid); }
-  };
+function addLog(...args){
+  const t = new Date().toISOString();
+  const line = args.map(a => {
+    if (typeof a === 'object') {
+      try { return JSON.stringify(a); } catch(e){ return String(a); }
+    }
+    return String(a);
+  }).join(' ');
+  logEl.textContent = t + '  ' + line + '\n' + logEl.textContent;
+  console.log(...args);
+}
+function setStatus(s){
+  statusEl.textContent = 'Status: ' + s;
+  addLog('STATUS', s);
 }
 
-/* Initialize Pi safely; keep trying a few times if SDK loads late */
-function initPi(){
+/* ---------- Pi SDK detection & init ---------- */
+let sdkPresent = false;
+let sdkReady = false;
+let lastPaymentId = null;
+
+function checkPiSDK(){
+  const present = (typeof Pi !== 'undefined');
+  const hasInit = present && typeof Pi.init === 'function';
+  const hasAuth = present && typeof Pi.authenticate === 'function';
+  const hasCreate = present && typeof Pi.createPayment === 'function';
+  addLog('Pi present:', present, 'init:', !!hasInit, 'authenticate:', !!hasAuth, 'createPayment:', !!hasCreate);
+  return { present, hasInit, hasAuth, hasCreate };
+}
+
+function safeInitPi(){
+  if (typeof Pi === 'undefined') {
+    addLog('Pi SDK not found in this browser (not Pi Browser). Demo will use mock mode.');
+    return false;
+  }
   try {
-    if (typeof Pi !== 'undefined' && typeof Pi.init === 'function') {
-      Pi.init({ version: "2.0" });
-      appendLog('Pi.init called (SDK present)');
-      return true;
-    } else {
-      appendLog('Pi not present yet');
-      return false;
-    }
+    Pi.init({ version: "2.0" });
+    addLog('✅ Pi.init called');
+    return true;
   } catch(e){
-    appendLog('Pi.init error', e);
+    addLog('Pi.init error', e);
     return false;
   }
 }
 
-/* Demo default ON for easy testing — installs mock Pi if real SDK not available */
-if (demoCheckbox.checked){ installMockPi(); initPi(); }
-function updateDemoLabel(){ demoLabel.textContent = 'Demo mode: ' + (demoCheckbox.checked ? 'ON' : 'OFF'); }
-demoCheckbox.addEventListener('change', ()=>{ updateDemoLabel(); if (demoCheckbox.checked){ installMockPi(); initPi(); appendLog('Demo enabled'); alert('Demo mode ON — you can test without Pi Browser'); } else { appendLog('Demo disabled'); alert('Demo mode OFF — reload page in Pi Browser to use real SDK'); } });
-updateDemoLabel();
+/* ---------- Mock fallback (for testing outside Pi Browser) ---------- */
+const MOCK = {
+  enabled: false,
+  authenticate: async (scopes) => {
+    // simulated authenticate
+    return { user:{ app_id:'demo-app', uid:'demo-user', credentials:{ scopes:['payments'], valid_until:{iso8601:'2099-01-01T00:00:00Z'} } }, accessToken:'mock-access-token' };
+  },
+  createPayment: (data, callbacks) => {
+    // simulate ready for server approval then completion
+    const pid = 'MOCK-' + Math.random().toString(36).slice(2,9);
+    addLog('MOCK createPayment invoked, id:', pid);
+    setTimeout(()=>{ if (callbacks && callbacks.onReadyForServerApproval) callbacks.onReadyForServerApproval(pid); }, 600);
+    // server approve simulation (mock)
+    setTimeout(()=>{ if (callbacks && callbacks.onReadyForServerCompletion) callbacks.onReadyForServerCompletion(pid, 'MOCKTX-'+Math.random().toString(36).slice(2,10)); }, 1600);
+    return pid;
+  }
+};
 
-/* Single-read server approve helper (avoids "body already read") */
-async function serverApprove(paymentId, txid=null){
+/* ---------- Server approval function ---------- */
+async function requestServerApprove(paymentId){
+  setStatus('Requesting server approval...');
+  addLog('Requesting server approval for', paymentId);
   try {
-    const body = { paymentId };
-    if (txid) body.txid = txid;
-    const r = await fetch('/api/approve-payment', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(body) });
-    const text = await r.text();
+    // POST to /api/approve-payment (server function) - adjust path if needed
+    const resp = await fetch('/api/approve-payment', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ paymentId })
+    });
     let data;
-    try { data = JSON.parse(text); } catch(e){ data = { raw: text }; }
-    appendLog('/api/approve-payment', r.status, data);
-    return { ok: r.ok, status: r.status, data };
+    try { data = await resp.json(); } catch(e){ data = {rawText: await resp.text().catch(()=>null)}; }
+    addLog('/api/approve-payment response', resp.status, data);
+    return { ok: resp.ok, status: resp.status, data };
   } catch(e){
-    appendLog('serverApprove error', e);
+    addLog('Server approve error', e);
     return { ok:false, error: String(e) };
   }
 }
 
-/* Button handlers */
-checkBtn.addEventListener('click', ()=>{ const present = typeof Pi !== 'undefined'; appendLog('SDK check', 'Pi present:', present, 'authenticate:', typeof Pi !== 'undefined' && typeof Pi.authenticate === 'function', 'createPayment:', typeof Pi !== 'undefined' && typeof Pi.createPayment === 'function'); setStatus('Checked SDK - see log'); });
-authBtn.addEventListener('click', async ()=>{ if (typeof Pi === 'undefined'){ alert('Pi SDK not present. Enable Demo Mode or open in Pi Browser.'); return; } setStatus('Authenticating (requesting payments scope)...'); appendLog('Calling Pi.authenticate with scopes ["payments"]'); try{ const res = await Pi.authenticate(['payments'], inc => appendLog('authenticate incomplete', inc)); appendLog('authenticate resolved', res); setStatus('Authorized'); alert('Authorized — you can now make payments.'); } catch(err){ appendLog('Auth error', err); setStatus('Auth failed'); alert('Authorization failed: ' + (err && err.message ? err.message : String(err))); } });
+/* ---------- Wire buttons ---------- */
+checkBtn.addEventListener('click', ()=>{
+  const info = checkPiSDK();
+  setStatus('Checked SDK - see log');
+  if(info.present && info.hasInit && info.hasAuth && info.hasCreate){
+    addLog('SDK seems fully present on page.');
+  } else {
+    addLog('SDK not fully present — if you are on phone, open this URL inside the Pi Browser (not Chrome).');
+  }
+});
 
-pingBtn.addEventListener('click', async ()=>{ setStatus('Pinging server...'); appendLog('Pinging /api/approve-payment'); try{ const r = await fetch('/api/approve-payment'); const t = await r.text(); appendLog('/api/approve-payment ping', r.status, t); alert('Ping: ' + r.status + ' — see logs'); } catch(e){ appendLog('Ping error', e); alert('Ping failed'); } });
+authBtn.addEventListener('click', async ()=>{
+  setStatus('Authenticating (requesting payments scope)...');
+  addLog('Calling Pi.authenticate with scopes ["payments"]');
+  try {
+    if (typeof Pi !== 'undefined') {
+      // ensure init called
+      try { Pi.init({ version: "2.0" }); addLog('Pi.init (re)called'); } catch(e){}
+      const res = await Pi.authenticate(['payments'], function(incomplete){ addLog('authenticate incomplete callback', incomplete); });
+      addLog('authenticate resolved:', res);
+      setStatus('Authorized');
+      payBtn.disabled = false;
+      return;
+    }
+    // fallback
+    const r = await MOCK.authenticate(['payments']);
+    addLog('MOCK authenticate resolved', r);
+    setStatus('Authorized (mock)');
+    payBtn.disabled = false;
+  } catch(err){
+    addLog('Auth error detailed', err);
+    setStatus('Auth failed');
+    alert('Authorization failed: ' + (err && err.message ? err.message : JSON.stringify(err)));
+  }
+});
 
+/* Payment flow with object callbacks (server-approve) */
 payBtn.addEventListener('click', async ()=>{
-  if (typeof Pi === 'undefined' || typeof Pi.createPayment !== 'function'){ alert('Open in Pi Browser and authorize first, or enable Demo Mode'); return; }
   setStatus('Creating payment...');
-  appendLog('about to call Pi.createPayment (server-approve flow)');
-  const payload = { amount: 0.01, memo: 'StorePi Demo', metadata: { demo:true } };
+  addLog('about to call Pi.createPayment (server-approve flow)');
+  const paymentData = { amount: 0.01, memo: 'StorePi Demo Payment', metadata: { demo:true } };
 
   const callbacks = {
     onReadyForServerApproval: async function(paymentId){
-      appendLog('onReadyForServerApproval', paymentId);
+      addLog('onReadyForServerApproval', paymentId);
+      lastPaymentId = paymentId;
       setStatus('Ready for approval: ' + paymentId);
-      setStatus('Requesting server approval...');
-      const r = await serverApprove(paymentId, null);
-      if (r.ok) setStatus('Server approved — waiting for completion'); else setStatus('Server approval failed');
+      // call server to approve
+      const result = await requestServerApprove(paymentId);
+      addLog('requestServerApprove result', result);
+      if (result.ok) {
+        setStatus('Server approved — waiting for completion');
+      } else {
+        setStatus('Server approval failed — you can manually complete with /api/manual-complete');
+      }
     },
     onReadyForServerCompletion: function(paymentId, txid){
-      appendLog('onReadyForServerCompletion', paymentId, txid);
+      addLog('onReadyForServerCompletion', paymentId, txid);
       setStatus('Payment completed');
-      showReceipt(paymentId, txid, 'Payment completed — thank you!');
-      serverApprove(paymentId, txid).then(rr => appendLog('post-complete', rr));
+      alert('Payment completed: ' + paymentId + '\nTx: ' + txid);
+      lastPaymentId = null;
     },
-    onCancel: function(paymentId){ appendLog('onCancel', paymentId); setStatus('Payment canceled'); alert('Payment canceled'); },
-    onError: function(err, payment){ appendLog('onError', err, payment); setStatus('Payment error'); alert('Payment error — check logs'); }
+    onCancel: function(paymentId){
+      addLog('onCancel', paymentId);
+      setStatus('Payment canceled');
+      lastPaymentId = null;
+    },
+    onError: function(err, payment){
+      addLog('onError', err, payment);
+      setStatus('Payment error');
+      lastPaymentId = null;
+      alert('Payment error: ' + (err && err.message ? err.message : JSON.stringify(err)));
+    }
   };
 
-  try { Pi.createPayment(payload, callbacks); appendLog('Pi.createPayment invoked'); } catch(e){ appendLog('createPayment threw', e); setStatus('createPayment threw error'); alert('Error creating payment: ' + (e && e.message ? e.message : String(e))); }
+  try {
+    if (typeof Pi !== 'undefined' && typeof Pi.createPayment === 'function') {
+      Pi.createPayment(paymentData, callbacks);
+      addLog('Pi.createPayment invoked.');
+    } else {
+      // fallback mock
+      MOCK.enabled = true;
+      MOCK.createPayment(paymentData, callbacks);
+    }
+  } catch(e){
+    addLog('createPayment threw', e);
+    setStatus('createPayment threw error');
+  }
 });
 
-manualComplete.addEventListener('click', async ()=>{
-  const pid = prompt('Payment ID to complete (from logs/receipt):'); if (!pid) return;
-  const tx = prompt('Tx ID (optional):');
-  try { const qs = new URLSearchParams({ paymentId: pid, txid: tx || '' }); const r = await fetch('/api/manual-complete?' + qs.toString()); const txt = await r.text(); appendLog('manual-complete', r.status, txt); alert('Manual-complete: ' + r.status + ' — see logs'); } catch(e){ appendLog('manual-complete error', e); alert('Error'); }
+pingBtn.addEventListener('click', async ()=>{
+  setStatus('Pinging server...');
+  addLog('Pinging /api/approve-payment');
+  try {
+    const r = await fetch('/api/approve-payment');
+    const j = await r.json().catch(()=>({raw: 'not-json'}));
+    addLog('/api/approve-payment response', r.status, j);
+    setStatus('/api/approve-payment -> ' + r.status);
+  } catch(e){
+    addLog('Ping server error', e);
+    setStatus('Ping error');
+  }
 });
 
-/* Retry init in case SDK loads later */
-let retries = 0;
-const retryInt = setInterval(()=>{ retries++; if (initPi() || retries > 12){ clearInterval(retryInt); appendLog('Pi init retry stopped'); } }, 1000);
-
+/* ---------- Auto-check on load ---------- */
+window.addEventListener('load', ()=>{
+  addLog('Page loaded - SDK check pending');
+  const presence = checkPiSDK();
+  if (presence.present) {
+    const ok = safeInitPi();
+    if (!ok) addLog('Warning: Pi.init failed.');
+  } else {
+    addLog('Pi SDK not found — demo will continue in mock mode (you can still test).');
+  }
+  setStatus('Loaded - SDK checked');
+  // enable pay button if mock or if SDK present + auth
+  if (!presence.present) {
+    payBtn.disabled = false; // allow mock payment
+    addLog('Mock payments enabled (outside Pi Browser).');
+  }
+});
 </script>
 </body>
 </html>
