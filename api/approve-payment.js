@@ -1,46 +1,61 @@
 // api/approve-payment.js
-// Approve + complete in one server call. Expects POST { paymentId }.
-// Uses PI_API_KEY environment variable.
+// POST { paymentId, txid? }
+// Optional header: X-ADMIN-TOKEN for extra security (configure ADMIN_TOKEN in Vercel env)
 
 export default async function handler(req, res) {
   try {
-    if (req.method !== 'POST') return res.status(200).json({ ok:true, message:'Send POST with paymentId' });
+    if (req.method !== 'POST') return res.status(200).json({ ok:true, message:'POST paymentId required' });
 
-    const { paymentId } = req.body || {};
+    const { paymentId, txid } = req.body || {};
     if (!paymentId) return res.status(400).json({ ok:false, error:'paymentId required' });
 
-    const API_KEY = process.env.PI_API_KEY;
-    if (!API_KEY) return res.status(500).json({ ok:false, error:'Missing PI_API_KEY' });
+    // optional admin token check
+    const ADMIN_TOKEN = process.env.ADMIN_TOKEN || '';
+    const clientToken = req.headers['x-admin-token'] || '';
+    if (ADMIN_TOKEN && clientToken !== ADMIN_TOKEN) {
+      return res.status(403).json({ ok:false, error:'Forbidden - invalid admin token' });
+    }
+
+    const API_KEY = process.env.PI_API_KEY || process.env.PI_SERVER_API_KEY;
+    if (!API_KEY) return res.status(500).json({ ok:false, error:'Missing PI_API_KEY in environment' });
 
     const headers = { 'Authorization': `Key ${API_KEY}`, 'Content-Type': 'application/json' };
 
-    // 1) Approve payment
-    const approveRes = await fetch(`https://api.minepi.com/v2/payments/${encodeURIComponent(paymentId)}/approve`, {
-      method: 'POST', headers, body: JSON.stringify({}) 
-    });
-    const approveText = await approveRes.text();
-    let approveJson; try { approveJson = JSON.parse(approveText); } catch(e) { approveJson = { raw: approveText }; }
+    // 1) Approve
+    const approveUrl = `https://api.minepi.com/v2/payments/${encodeURIComponent(paymentId)}/approve`;
+    const approveRes = await fetch(approveUrl, { method:'POST', headers, body: JSON.stringify({}) });
+    const approveText = await approveRes.text().catch(()=>'');
+    let approveBody; try { approveBody = JSON.parse(approveText); } catch(e) { approveBody = { raw: approveText }; }
 
     if (!approveRes.ok) {
-      return res.status(500).json({ ok:false, step:'approve', status: approveRes.status, body: approveJson });
+      return res.status(Math.max(400, approveRes.status)).json({ ok:false, step:'approve', status:approveRes.status, body:approveBody });
     }
 
-    // 2) If approval returned txid (or wait to get txid from client), try to complete immediately.
-    // If Pi requires txid, client should send txid; here we'll attempt complete with no txid and handle gracefully.
-    const completeRes = await fetch(`https://api.minepi.com/v2/payments/${encodeURIComponent(paymentId)}/complete`, {
-      method: 'POST', headers, body: JSON.stringify({})
-    });
-    const completeText = await completeRes.text();
-    let completeJson; try { completeJson = JSON.parse(completeText); } catch(e) { completeJson = { raw: completeText }; }
+    // 2) If txid provided, call complete immediately (safe)
+    let completeBody = null;
+    if (txid) {
+      const completeUrl = `https://api.minepi.com/v2/payments/${encodeURIComponent(paymentId)}/complete`;
+      const completeRes = await fetch(completeUrl, { method:'POST', headers, body: JSON.stringify({ txid }) });
+      const completeText = await completeRes.text().catch(()=>'');
+      try { completeBody = JSON.parse(completeText); } catch(e) { completeBody = { raw: completeText }; }
+      if (!completeRes.ok) {
+        // return both results for debugging
+        return res.status(Math.max(400, completeRes.status)).json({ ok:false, step:'complete', status: completeRes.status, body: completeBody, approved: approveBody });
+      }
+    }
 
-    // Return both responses to help debugging
+    // success
     return res.status(200).json({
       ok: true,
-      approved: { status: approveRes.status, body: approveJson },
-      completed: { status: completeRes.status, body: completeJson }
+      message: 'Approved' + (txid ? ' and completed' : ' (pending completion)'),
+      paymentId,
+      txid: txid || null,
+      approve: approveBody,
+      complete: completeBody
     });
+
   } catch (err) {
     console.error('approve-payment error', err);
-    return res.status(500).json({ ok:false, error:String(err) });
+    return res.status(500).json({ ok:false, error: String(err) });
   }
 }
