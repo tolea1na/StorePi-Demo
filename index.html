@@ -3,176 +3,227 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>StorePi — Inter Fan Shop</title>
-<meta name="description" content="StorePi — demo shop to buy digital stickers with Pi. Inter-inspired theme." />
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23000a1a' width='100' height='100' rx='18'/><text x='50' y='58' font-size='50' text-anchor='middle' fill='%230a84ff' font-family='Arial' font-weight='700'>π</text></svg>">
+<title>StorePi — Official Fan Shop</title>
+<meta name="description" content="StorePi — demo shop to buy digital stickers with Pi. Clean, professional UI inspired by Inter blue." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%2300121f' width='100' height='100' rx='20'/><text x='50' y='62' font-size='48' text-anchor='middle' fill='%230a84ff' font-family='Arial'>π</text></svg>">
 <style>
+  /* -----------------------
+     BRAND / THEME
+     ----------------------- */
   :root{
-    --bg-dark:#02040a;
-    --bg-mid:#07112a;
-    --card:#06172b;
-    --muted:#9db7d0;
-    --accent:#003d7a;   /* deep Inter blue */
-    --accent-2:#0a84ff; /* electric blue */
-    --gold:#ffc857;
-    --radius:14px;
-    --glass: rgba(255,255,255,0.02);
+    --bg:#f5f8fb;        /* soft light background */
+    --panel:#ffffff;     /* card background */
+    --muted:#6a7b88;
+    --ink:#052033;
+    --accent:#062e58;    /* deep navy for headings */
+    --accent-2:#0a84ff;  /* electric Inter blue (used for CTA & heart) */
+    --glass: rgba(10,20,30,0.04);
     --success:#16a34a;
-    color-scheme: dark;
+    --radius:14px;
+    --shadow: 0 10px 30px rgba(9,20,30,0.08);
     font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
   }
-  *{box-sizing:border-box}
-  html,body{height:100%;margin:0;background:linear-gradient(180deg,var(--bg-dark),var(--bg-mid));color:var(--muted);-webkit-font-smoothing:antialiased}
-  .wrap{max-width:1100px;margin:20px auto;padding:18px}
-  .header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-  .logo{width:64px;height:64px;border-radius:12px;background:linear-gradient(180deg,var(--accent-2),var(--accent));display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:26px;box-shadow:0 10px 30px rgba(0,0,0,0.6)}
-  h1{margin:0;font-size:20px;color:#cfe7ff}
-  .lead{margin:4px 0;color:#82a7c6;font-size:13px}
-  .grid{display:grid;grid-template-columns:1fr;gap:16px}
-  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:18px;border-radius:var(--radius);box-shadow:0 10px 40px rgba(0,0,0,0.6)}
-  .product{display:flex;gap:14px;align-items:center}
-  .thumb{width:140px;height:110px;border-radius:12px;background:linear-gradient(180deg,#071a3a,#021127);display:flex;align-items:center;justify-content:center;color:var(--accent-2);font-weight:800;font-size:44px}
-  .product-info{flex:1}
-  .price{font-weight:800;font-size:20px;color:var(--accent-2)}
-  .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
-  .btn{background:var(--accent);border:0;color:white;padding:12px 14px;border-radius:10px;font-weight:700;cursor:pointer;box-shadow:0 8px 22px rgba(2,6,23,0.6)}
-  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
-  .status{margin-top:12px;padding:10px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));color:#d9f6ff}
-  .log{margin-top:12px;background:rgba(2,6,23,0.6);padding:12px;border-radius:10px;color:#9fd6ff;font-family:monospace;white-space:pre-wrap;max-height:300px;overflow:auto}
-  .right{display:none}
-  .footer{margin-top:16px;text-align:center;color:#88b0d0;font-size:13px}
-  .receipt{margin-top:12px;padding:12px;border-radius:10px;background:linear-gradient(180deg,#02223f,#021427);color:#dff6ff}
-  .tx{font-family:monospace;word-break:break-all;color:#9fd6ff}
-  .badge{display:inline-block;padding:6px 10px;border-radius:999px;background:linear-gradient(90deg,#073b70,#0a84ff);color:white;font-weight:700}
-  .hidden{display:none}
-  .note{margin-top:10px;color:#8fa8c6;font-size:13px}
-  @media(min-width:860px){
-    .grid{grid-template-columns:1fr 360px}
-    .right{display:block}
+
+  /* -----------------------
+     LAYOUT
+     ----------------------- */
+  html,body{height:100%;margin:0;background:var(--bg);color:var(--ink)}
+  .wrap{max-width:1100px;margin:28px auto;padding:18px}
+  header{display:flex;gap:14px;align-items:center;margin-bottom:18px}
+  .brand{
+    display:flex;gap:12px;align-items:center;
   }
+  .logo{
+    width:64px;height:64px;border-radius:12px;background:linear-gradient(180deg,#071a3a,#021227);
+    display:flex;align-items:center;justify-content:center;color:var(--accent-2);font-weight:800;font-size:26px;box-shadow:var(--shadow)
+  }
+  h1{margin:0;font-size:20px;color:var(--accent);line-height:1}
+  .tag{color:var(--muted);font-size:13px;margin-top:4px}
+
+  /* -----------------------
+     MAIN GRID
+     ----------------------- */
+  .grid{display:grid;grid-template-columns:1fr;gap:18px}
+  @media(min-width:880px){ .grid{grid-template-columns:1fr 360px} }
+
+  .card{background:var(--panel);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+  .hero{display:flex;justify-content:space-between;align-items:center;gap:20px}
+  .hero-left{max-width:720px}
+  .headline{font-size:22px;color:var(--accent);margin:0 0 6px}
+  .sub{color:var(--muted);margin:0 0 14px}
+
+  /* -----------------------
+     PRODUCT CARD
+     ----------------------- */
+  .product{display:flex;gap:16px;align-items:center}
+  .thumb{
+    width:140px;height:110px;border-radius:12px;background:linear-gradient(180deg,#eaf6ff,#dceeff);display:flex;align-items:center;justify-content:center;
+    font-weight:800;color:var(--accent-2);font-size:40px;box-shadow:0 8px 20px rgba(10,20,30,0.06)
+  }
+  .price{font-weight:800;font-size:18px;color:var(--accent-2)}
+  .desc{color:var(--muted);font-size:14px}
+
+  /* -----------------------
+     ACTIONS
+     ----------------------- */
+  .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .btn{
+    background:linear-gradient(180deg,var(--accent-2),#0878ff);border:0;color:white;padding:12px 16px;border-radius:10px;font-weight:700;cursor:pointer;box-shadow:0 8px 22px rgba(10,30,60,0.12);transition:transform .14s ease,box-shadow .14s ease;
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn.ghost{background:transparent;border:1px solid rgba(6,30,50,0.06);color:var(--muted);font-weight:600;padding:11px 14px}
+
+  .status{margin-top:12px;padding:10px;border-radius:10px;background:var(--glass);color:var(--accent);display:inline-block}
+  .log{margin-top:14px;background:#0f2330;padding:12px;border-radius:10px;color:#bfe7ff;font-family:monospace;white-space:pre-wrap;max-height:300px;overflow:auto}
+
+  /* -----------------------
+     RIGHT COLUMN (receipt)
+     ----------------------- */
+  .receipt{border-radius:12px;padding:14px;background:linear-gradient(180deg,#ffffff,#fbfdff);border:1px solid rgba(6,30,50,0.03)}
+  .receipt h3{margin:0;color:var(--accent)}
+  .receipt .tx{font-family:monospace;color:var(--accent-2);word-break:break-all}
+  .receipt .meta{color:var(--muted);font-size:13px;margin-top:8px}
+  .receipt .actions{display:flex;gap:8px;margin-top:12px}
+
+  /* -----------------------
+     FOOTER / MICRO
+     ----------------------- */
+  footer{margin-top:20px;text-align:center;color:var(--muted);font-size:13px}
+  .blueheart{color:var(--accent-2)}
+
+  /* -----------------------
+     SMALL UI niceties + animations
+     ----------------------- */
+  .fade {transition:opacity .28s ease,transform .28s ease}
+  .invisible{opacity:0;transform:translateY(6px);pointer-events:none}
+  .visible{opacity:1;transform:none;pointer-events:auto}
 </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="header">
-      <div class="logo" aria-hidden="true">SP</div>
-      <div>
-        <h1>StorePi — Inter Fan Shop</h1>
-        <div class="lead">Buy a demo sticker pack with Pi — server-approved flow. Open in <strong>Pi Browser</strong> to test real payments.</div>
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true">SP</div>
+        <div>
+          <h1>StorePi</h1>
+          <div class="tag">Official Fan Shop — demo payments with Pi</div>
+        </div>
       </div>
-      <div style="margin-left:auto"><span class="badge">Demo</span></div>
-    </div>
+
+      <div style="margin-left:auto;display:flex;gap:10px;align-items:center">
+        <div style="font-weight:700;color:var(--muted)">Demo</div>
+      </div>
+    </header>
 
     <div class="grid">
-      <main class="card" aria-labelledby="productTitle">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div>
-            <div class="small">Featured</div>
-            <div id="productTitle" style="font-size:18px;font-weight:800;color:#dff6ff">Digital Sticker Pack — Nerazzurri</div>
+      <!-- left -->
+      <main class="card">
+        <div class="hero">
+          <div class="hero-left">
+            <div class="headline">Digital Sticker Pack — Nerazzurri</div>
+            <div class="sub">High-quality, Inter-inspired stickers for chat and social. Instant delivery after payment.</div>
           </div>
-          <div class="price">0.01 Pi</div>
+          <div style="text-align:right">
+            <div style="font-size:28px;font-weight:900;color:var(--accent-2)">0.01 Pi</div>
+            <div style="color:var(--muted);font-size:13px">Testnet</div>
+          </div>
         </div>
 
         <div style="height:12px"></div>
 
         <div class="product">
           <div class="thumb" aria-hidden="true">⚽</div>
-          <div class="product-info">
-            <div style="color:var(--muted)">A curated pack of Inter-inspired stickers — perfect for chat and profiles. Instant delivery after payment.</div>
-            <div class="controls" role="group" aria-label="Actions">
-              <button id="payBtn" class="btn" aria-label="Buy 0.01 Pi">Buy 0.01 Pi</button>
-              <button id="authBtn" class="btn ghost" aria-label="Authorize app">Authorize (payments)</button>
+          <div style="flex:1">
+            <div class="desc">A small pack with 8 exclusive Nerazzurri stickers: badges, chants and mini-logos. Delivered instantly on success.</div>
+
+            <div class="controls">
+              <button id="payBtn" class="btn" aria-label="Buy 0.01 Pi">Buy — 0.01 Pi</button>
+              <button id="authBtn" class="btn ghost" aria-label="Authorize payments">Authorize (payments)</button>
               <button id="checkBtn" class="btn ghost" aria-label="Check SDK">Check SDK</button>
             </div>
+
+            <div id="status" class="status">Status: idle</div>
+
+            <div id="log" class="log" aria-live="polite">Logs will appear here...</div>
           </div>
         </div>
-
-        <div id="status" class="status">Status: idle</div>
-
-        <div id="log" class="log">Logs will appear here...</div>
-
-        <div class="note">Made with <span style="color:#0a84ff">💙</span> — Forza Inter!</div>
       </main>
 
-      <aside class="right">
-        <div class="card">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div><strong>Receipt Center</strong></div>
-            <div class="small">Quick support</div>
-          </div>
+      <!-- right -->
+      <aside>
+        <div class="receipt card" id="receiptCard" aria-hidden="true">
+          <h3>Receipt & Status</h3>
+          <div class="meta" id="receiptMeta">No payments yet — try a test purchase.</div>
 
-          <div id="receipt" class="receipt hidden" aria-hidden="true">
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <div><strong>Receipt</strong></div>
-              <div class="badge">Paid</div>
-            </div>
-            <div style="height:8px"></div>
-            <div class="small">Item: Digital Sticker Pack</div>
-            <div style="height:8px"></div>
-            <div>Amount: <strong>0.01 Pi</strong></div>
-            <div style="height:8px"></div>
-            <div>Payment ID: <div class="tx" id="paymentId"></div></div>
-            <div style="height:8px"></div>
-            <div>Tx ID: <div class="tx" id="txid"></div></div>
-            <div style="height:8px"></div>
-            <div><a id="txlink" class="small" target="_blank" rel="noreferrer">View on Testnet</a></div>
-            <div style="height:10px"></div>
-            <div style="display:flex;gap:8px">
-              <button id="closeReceipt" class="btn ghost">Close</button>
-              <button id="manualComplete" class="btn">Force Complete</button>
-            </div>
-          </div>
+          <div style="height:10px"></div>
+          <div style="font-size:13px;color:var(--muted)">Payment ID</div>
+          <div class="tx" id="receiptPayment">—</div>
 
-          <div style="height:12px"></div>
-          <div class="small">Server endpoint:</div>
-          <div class="small"><code>/api/approve-payment</code></div>
           <div style="height:8px"></div>
-          <div class="small">Env: <code>PI_API_KEY</code> (Vercel)</div>
+          <div style="font-size:13px;color:var(--muted)">Transaction (txid)</div>
+          <div class="tx" id="receiptTx">—</div>
+
+          <div style="height:10px"></div>
+          <div class="actions">
+            <button id="viewTx" class="btn ghost">Open on Testnet</button>
+            <button id="manualComplete" class="btn">Force Complete</button>
+          </div>
         </div>
       </aside>
     </div>
 
-    <div class="footer">© StorePi Demo — built with <span style="color:#0a84ff">💙</span></div>
+    <footer>Made with <span class="blueheart">💙</span> — Forza Inter!</footer>
   </div>
 
 <script src="https://sdk.minepi.com/pi-sdk.js"></script>
 <script>
-/* ---------- UI helpers ---------- */
+/* -----------------------
+   Frontend logic: Pi SDK + server approve flow
+   Keep this intact when you paste.
+   ----------------------- */
 const logEl = document.getElementById('log');
 const statusEl = document.getElementById('status');
 const payBtn = document.getElementById('payBtn');
 const authBtn = document.getElementById('authBtn');
 const checkBtn = document.getElementById('checkBtn');
-const receipt = document.getElementById('receipt');
-const paymentIdEl = document.getElementById('paymentId');
-const txidEl = document.getElementById('txid');
-const txlink = document.getElementById('txlink');
-const closeReceipt = document.getElementById('closeReceipt');
+const receiptCard = document.getElementById('receiptCard');
+const receiptMeta = document.getElementById('receiptMeta');
+const receiptPayment = document.getElementById('receiptPayment');
+const receiptTx = document.getElementById('receiptTx');
+const viewTx = document.getElementById('viewTx');
 const manualComplete = document.getElementById('manualComplete');
 
-function stamp(){ return new Date().toISOString(); }
-function appendLog(...args){
-  const text = args.map(a => (typeof a==='object' ? JSON.stringify(a) : String(a))).join(' ');
-  const line = stamp() + '  ' + text;
+function now(){ return new Date().toISOString(); }
+function appendLog(...parts){
+  const text = parts.map(p => (typeof p==='object' ? JSON.stringify(p) : String(p))).join(' ');
+  const line = now() + '  ' + text;
   logEl.textContent = line + '\\n' + logEl.textContent;
-  console.log(...args);
+  console.log(...parts);
 }
 function setStatus(s){ statusEl.textContent = 'Status: ' + s; appendLog('STATUS', s); }
-function showReceipt(pid, tx){ receipt.classList.remove('hidden'); receipt.setAttribute('aria-hidden','false'); paymentIdEl.textContent = pid; txidEl.textContent = tx || '(none)'; txlink.href = tx ? ('https://api.testnet.minepi.com/transactions/' + tx) : '#'; }
-function hideReceipt(){ receipt.classList.add('hidden'); receipt.setAttribute('aria-hidden','true'); }
+function showReceipt(paymentId, txid, message){
+  receiptCard.classList.remove('invisible'); receiptCard.classList.add('visible');
+  receiptCard.style.display = '';
+  receiptMeta.textContent = message || 'Payment completed';
+  receiptPayment.textContent = paymentId || '—';
+  receiptTx.textContent = txid || '—';
+  viewTx.onclick = ()=> { if (txid) window.open('https://api.testnet.minepi.com/transactions/' + txid, '_blank'); else alert('No txid available'); };
+}
 
-/* ---------- init Pi SDK ---------- */
+/* Init SDK */
 try {
   if (typeof Pi !== 'undefined' && typeof Pi.init === 'function') {
     Pi.init({ version: "2.0" });
-    appendLog('✅ Pi SDK initialized (if in Pi Browser)');
+    appendLog('Pi SDK init called (if in Pi Browser)');
   } else {
-    appendLog('Pi object missing — open this app inside Pi Browser for real payments.');
+    appendLog('Pi object missing — open in Pi Browser for real payments');
   }
 } catch(e){ appendLog('Pi.init error', e); }
 
-/* ---------- check ---------- */
-checkBtn.addEventListener('click', () => {
+/* Check button */
+checkBtn.addEventListener('click', ()=>{
   const present = typeof Pi !== 'undefined';
   const hasAuth = present && typeof Pi.authenticate === 'function';
   const hasCreate = present && typeof Pi.createPayment === 'function';
@@ -180,9 +231,9 @@ checkBtn.addEventListener('click', () => {
   setStatus('Checked SDK - see log');
 });
 
-/* ---------- authorize ---------- */
-authBtn.addEventListener('click', async () => {
-  if (typeof Pi === 'undefined'){ alert('Open this page in the Pi Browser to authorize'); return; }
+/* Authorize */
+authBtn.addEventListener('click', async ()=>{
+  if (typeof Pi === 'undefined'){ alert('Open this page in Pi Browser to authorize'); return; }
   setStatus('Authenticating (requesting payments scope)...');
   appendLog('Calling Pi.authenticate with scopes ["payments"]');
   try {
@@ -190,57 +241,58 @@ authBtn.addEventListener('click', async () => {
     appendLog('authenticate resolved:', res);
     setStatus('Authorized');
     alert('Authorized — you can now make payments.');
-  } catch(err) {
+  } catch(err){
     appendLog('Auth error', err);
     setStatus('Auth failed');
     alert('Authorization failed. Re-open from My Apps and try again.');
   }
 });
 
-/* ---------- server approve helper ---------- */
-async function serverApprove(paymentId, txid = null) {
+/* helper: post approve to server */
+async function postApprove(paymentId, txid=null){
   try {
-    const body = { paymentId };
-    if (txid) body.txid = txid;
-    const r = await fetch('/api/approve-payment', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(body) });
-    const text = await r.text();
-    appendLog('/api/approve-payment response', r.status, text);
-    return { ok: r.ok, status: r.status, raw: text };
-  } catch(e) {
-    appendLog('serverApprove error', e);
+    const r = await fetch('/api/approve-payment', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ paymentId, txid })
+    });
+    const txt = await r.text();
+    appendLog('/api/approve-payment response', r.status, txt);
+    return { ok: r.ok, status: r.status, text: txt };
+  } catch(e){
+    appendLog('postApprove error', e);
     return { ok:false, error: String(e) };
   }
 }
 
-/* ---------- buy flow ---------- */
-payBtn.addEventListener('click', async () => {
-  hideReceipt();
-  if (typeof Pi === 'undefined' || typeof Pi.createPayment !== 'function'){ alert('Open in Pi Browser and authorize first.'); return; }
+/* Buy flow */
+payBtn.addEventListener('click', ()=>{
+  if (typeof Pi === 'undefined' || typeof Pi.createPayment !== 'function'){ alert('Open in Pi Browser and authorize first'); return; }
   setStatus('Creating payment...');
   appendLog('about to call Pi.createPayment (server-approve flow)');
-  const payload = { amount: 0.01, memo: 'StorePi Demo Payment', metadata:{ productId:'stickers-001' } };
+  const payload = { amount: 0.01, memo: 'StorePi — Sticker Pack', metadata: { product:'stickers-nerazzurri' } };
 
   const callbacks = {
     onReadyForServerApproval: async function(paymentId){
       appendLog('onReadyForServerApproval', paymentId);
       setStatus('Ready for approval: ' + paymentId);
-      // Immediately request server approve (no txid yet)
+      // request server to approve (no txid yet)
       setStatus('Requesting server approval...');
-      const res = await serverApprove(paymentId, null);
+      const res = await postApprove(paymentId, null);
       if (res.ok) setStatus('Server approved — waiting for completion');
       else setStatus('Server approval failed');
     },
     onReadyForServerCompletion: function(paymentId, txid){
       appendLog('onReadyForServerCompletion', paymentId, txid);
       setStatus('Payment completed');
-      showReceipt(paymentId, txid);
-      // Also notify server with txid to ensure completion persisted
-      serverApprove(paymentId, txid).then(r => appendLog('serverApprove (post-tx) result', r));
+      showReceipt(paymentId, txid, 'Payment completed — thank you!');
+      // inform server with txid as well (best effort)
+      postApprove(paymentId, txid).then(r=> appendLog('postComplete result', r));
     },
     onCancel: function(paymentId){
       appendLog('onCancel', paymentId);
       setStatus('Payment canceled');
-      alert('Payment canceled by user.');
+      alert('Payment cancelled.');
     },
     onError: function(err, payment){
       appendLog('onError', err, payment);
@@ -251,30 +303,28 @@ payBtn.addEventListener('click', async () => {
 
   try {
     Pi.createPayment(payload, callbacks);
-    appendLog('Pi.createPayment invoked.');
-  } catch(e) {
+    appendLog('Pi.createPayment invoked');
+  } catch(e){
     appendLog('createPayment threw', e);
     setStatus('createPayment threw error');
     alert('Error creating payment: ' + (e && e.message ? e.message : String(e)));
   }
 });
 
-/* ---------- manual complete button ---------- */
-manualComplete.addEventListener('click', async () => {
-  const pid = paymentIdEl.textContent || prompt('Enter paymentId to complete:');
+/* Manual complete for support */
+manualComplete.addEventListener('click', async ()=>{
+  const pid = receiptPayment.textContent || prompt('Payment ID to complete:');
   if (!pid) return;
   try {
     const r = await fetch('/api/manual-complete?paymentId=' + encodeURIComponent(pid));
-    const text = await r.text();
-    appendLog('manual-complete', r.status, text);
-    alert('manual-complete result: ' + text);
-  } catch(e) {
+    const txt = await r.text();
+    appendLog('manual-complete', r.status, txt);
+    alert('Manual-complete result: ' + txt);
+  } catch(e){
     appendLog('manual-complete error', e);
     alert('Error');
   }
 });
-
-closeReceipt.addEventListener('click', hideReceipt);
 </script>
 </body>
 </html>
