@@ -1,134 +1,42 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>StorePi Demo — Real SDK</title>
-</head>
-<body style="font-family: Arial, sans-serif; text-align: center; margin-top: 40px;">
-  <h1>🟣 StorePi Demo — Real SDK</h1>
-  <p>This demo runs with the real Pi Network SDK inside the Pi Browser.</p>
-
-  <button id="check">Check SDK</button>
-  <button id="auth">Authorize (payments)</button>
-  <button id="pay">Test Payment 0.01 Pi</button>
-  <button id="ping">Ping Server</button>
-
-  <h3 id="status">Status: Idle</h3>
-  <pre id="log" style="text-align:left; margin:auto; width:90%; max-width:600px; background:#111; color:#0f0; padding:10px; border-radius:10px; height:300px; overflow-y:auto;">
-Logs will appear here...
-  </pre>
-
-  <!-- Pi SDK -->
-  <script src="https://sdk.minepi.com/pi-sdk.js"></script>
-
-  <script>
-    const status = document.getElementById("status");
-    const log = document.getElementById("log");
-    const logMsg = (msg) => {
-      const line = new Date().toISOString() + "  " + msg;
-      console.log(line);
-      log.textContent += "\n" + line;
-      log.scrollTop = log.scrollHeight;
-    };
-
-    function setStatus(s) {
-      status.textContent = "Status: " + s;
-      logMsg("STATUS " + s);
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>StorePi — Demo Checkout</title>
+  <meta name="description" content="StorePi demo — test Pi payments (server-approve flow)" />
+  <meta name="theme-color" content="#106FA4" />
+  <!-- Fallback system font -->
+  <link rel="icon" href="/favicon.ico" />
+  <style>
+    :root{
+      --bg: #f6fbff;
+      --card: #ffffff;
+      --muted: #6b7f8f;
+      --accent: #6c5ce7;
+      --primary: #106FA4;
+      --success: #2ecc71;
+      --danger: #ff6b6b;
+      --shadow: 0 8px 30px rgba(9,20,30,0.08);
+      --radius: 12px;
     }
-
-    // --- Initialize SDK ---
-    window.addEventListener("load", () => {
-      if (typeof Pi !== "undefined" && typeof Pi.init === "function") {
-        try {
-          Pi.init({ version: "2.0" });
-          logMsg("✅ Pi SDK initialized successfully");
-        } catch (err) {
-          logMsg("❌ Pi.init failed " + JSON.stringify(err));
-        }
-      } else {
-        logMsg("⚠️ Pi object missing (this only works inside Pi Browser)");
-      }
-    });
-
-    // --- Buttons ---
-    document.getElementById("check").onclick = async () => {
-      setStatus("Checking SDK...");
-      if (typeof Pi === "undefined") {
-        logMsg("Pi object: MISSING");
-      } else {
-        logMsg(`Pi present: ${!!Pi} authenticate: ${!!Pi.authenticate} createPayment: ${!!Pi.createPayment}`);
-      }
-    };
-
-    document.getElementById("auth").onclick = async () => {
-      setStatus("Authenticating (requesting payments scope)...");
-      try {
-        const scopes = ["payments"];
-        logMsg("Calling Pi.authenticate with scopes " + JSON.stringify(scopes));
-        const user = await Pi.authenticate(scopes, (auth) => logMsg("authenticate incomplete callback " + auth));
-        logMsg("authenticate resolved: " + JSON.stringify(user));
-        setStatus("Authorized");
-      } catch (err) {
-        setStatus("Auth failed");
-        logMsg("Auth error detailed " + JSON.stringify(err));
-      }
-    };
-
-    document.getElementById("pay").onclick = async () => {
-      setStatus("Creating payment...");
-      try {
-        logMsg("about to call Pi.createPayment (server-approve flow)");
-        const payment = await Pi.createPayment(
-          {
-            amount: 0.01,
-            memo: "StorePi Demo Payment",
-            metadata: { demo: true }
-          },
-          {
-            onReadyForServerApproval: (paymentId) => {
-              logMsg("onReadyForServerApproval " + paymentId);
-              setStatus("Ready for approval: " + paymentId);
-              fetch("/api/approve-payment", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ paymentId })
-              })
-                .then(res => res.json())
-                .then(data => logMsg("Server approve response " + JSON.stringify(data)))
-                .catch(e => logMsg("Server approve error " + e));
-            },
-            onReadyForServerCompletion: (paymentId, txid) => {
-              logMsg("onReadyForServerCompletion " + paymentId + " " + txid);
-              setStatus("Payment completed");
-            },
-            onCancel: (paymentId) => {
-              setStatus("Payment cancelled");
-              logMsg("onCancel " + paymentId);
-            },
-            onError: (err, payment) => {
-              setStatus("Payment error");
-              logMsg("onError " + JSON.stringify(err) + " " + JSON.stringify(payment));
-            }
-          }
-        );
-        logMsg("Pi.createPayment invoked. Waiting for callbacks...");
-      } catch (err) {
-        setStatus("createPayment threw error");
-        logMsg("createPayment threw " + JSON.stringify(err));
-      }
-    };
-
-    document.getElementById("ping").onclick = async () => {
-      setStatus("Pinging server...");
-      try {
-        const res = await fetch("/api/approve-payment");
-        const data = await res.json();
-        logMsg("/api/approve-payment response " + res.status + " -> " + JSON.stringify(data));
-      } catch (err) {
-        logMsg("Ping error " + err);
-      }
-    };
-  </script>
-</body>
-</html>
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,#f6fbff,#eef7ff);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;}
+    .wrap{max-width:920px;margin:28px auto;padding:18px;}
+    .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;overflow:hidden;}
+    header{display:flex;gap:12px;align-items:center}
+    .logo{width:56px;height:56px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,var(--accent),var(--primary));color:#fff;font-weight:700}
+    h1{margin:0;font-size:18px;color:#073047}
+    p.lead{margin:6px 0 0;color:var(--muted);font-size:13px}
+    .controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+    .btn{background:var(--primary);border:0;color:white;padding:12px;border-radius:10px;font-weight:600;cursor:pointer}
+    .btn.secondary{background:#e6f2fb;color:var(--primary);border:1px solid rgba(16,111,164,0.08)}
+    .full{grid-column:1/-1}
+    #status{margin-top:12px;padding:10px;border-radius:8px;background:#eef9ff;color:#0b4c6b;font-weight:600}
+    .row{display:flex;gap:8px;align-items:center;margin-top:12px}
+    .log-wrap{margin-top:12px}
+    .log{background:#071427;color:#bfe8ff;padding:12px;border-radius:8px;font-family:monospace;font-size:12px;max-height:260px;overflow:auto;white-space:pre-wrap}
+    .small{font-size:13px;color:var(--muted)}
+    .success-screen{display:none;padding:18px;text-align:center}
+    .success-screen.active{display:block}
+    .tx{word-break:break-all;background:#f1f9f5;padding:10px;border-radius:8px;margin-top:10px;color:#025e3d;font-size:13px}
+    @media(max-width:
