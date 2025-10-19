@@ -1,42 +1,282 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>StorePi — Demo Checkout</title>
-  <meta name="description" content="StorePi demo — test Pi payments (server-approve flow)" />
-  <meta name="theme-color" content="#106FA4" />
-  <!-- Fallback system font -->
-  <link rel="icon" href="/favicon.ico" />
-  <style>
-    :root{
-      --bg: #f6fbff;
-      --card: #ffffff;
-      --muted: #6b7f8f;
-      --accent: #6c5ce7;
-      --primary: #106FA4;
-      --success: #2ecc71;
-      --danger: #ff6b6b;
-      --shadow: 0 8px 30px rgba(9,20,30,0.08);
-      --radius: 12px;
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>StorePi — Buy with Pi</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23186fb4' width='100' height='100' rx='18'/><text x='50' y='58' font-size='50' text-anchor='middle' fill='white' font-family='Arial' font-weight='700'>π</text></svg>">
+<style>
+  :root{
+    --bg:#f6fbff; --card:#ffffff; --muted:#6b7a83; --accent:#1867b4; --accent-2:#6c5ce7; --success:#16a34a;
+    font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+  html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7fbff,#eef6fb);color:#072033}
+  .wrap{max-width:980px;margin:24px auto;padding:18px}
+  header{display:flex;align-items:center;gap:14px}
+  .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(180deg,var(--accent-2),var(--accent));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:20px}
+  h1{margin:0;font-size:20px}
+  p.lead{margin:6px 0 18px;color:var(--muted)}
+  .grid{display:grid;grid-template-columns:1fr;gap:16px}
+  .card{background:var(--card);border-radius:12px;padding:16px;box-shadow:0 8px 20px rgba(10,20,30,0.06)}
+  .product{display:flex;gap:12px;align-items:center}
+  .thumb{width:120px;height:100px;border-radius:10px;background:linear-gradient(180deg,#e6f2ff,#cfeaff);display:flex;align-items:center;justify-content:center;font-weight:700;color:#083d62}
+  .product-info{flex:1}
+  .price{font-weight:700;font-size:20px;color:#083d62}
+  button.btn{background:var(--accent);color:#fff;border:0;padding:12px 14px;border-radius:10px;font-weight:600;cursor:pointer}
+  button.ghost{background:transparent;border:1px solid rgba(0,0,0,0.06);color:var(--muted)}
+  .controls{display:flex;gap:10px;flex-wrap:wrap}
+  .status{margin-top:10px;padding:10px;border-radius:8px;background:#e8f6ff;color:#064b6f}
+  #log{margin-top:12px;background:#071427;padding:12px;border-radius:8px;color:#bfe8ff;font-family:monospace;white-space:pre-wrap;max-height:260px;overflow:auto}
+  .muted{color:var(--muted);font-size:14px}
+  .receipt{max-width:720px;margin:18px auto;padding:14px;border-radius:12px;background:linear-gradient(180deg,#fff,#fbfeff);box-shadow:0 10px 30px rgba(10,20,30,0.06)}
+  .tx{font-family:monospace;word-break:break-all;color:#003b5c}
+  @media(min-width:720px){.grid{grid-template-columns:1fr 360px}}
+  .hidden{display:none}
+  .spinner{width:18px;height:18px;border-radius:50%;border:3px solid rgba(255,255,255,0.2);border-top-color:rgba(255,255,255,0.9);animation:spin .9s linear infinite;display:inline-block;vertical-align:middle}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .success-badge{display:inline-block;padding:6px 10px;background:linear-gradient(90deg,#dafbe7,#bff3d8);color:var(--success);border-radius:999px;font-weight:600}
+  a.small{color:var(--accent-2);text-decoration:none}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo" aria-hidden="true">SP</div>
+      <div>
+        <h1>StorePi</h1>
+        <p class="lead">Buy a demo item with Pi — secure server approval flow. Open in <strong>Pi Browser</strong> to test live payments.</p>
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- left: product & controls -->
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div class="muted">Featured product</div>
+            <div style="font-size:18px;font-weight:700">Digital Sticker Pack</div>
+          </div>
+          <div class="price">0.01 Pi</div>
+        </div>
+
+        <div style="height:12px"></div>
+
+        <div class="product">
+          <div class="thumb" aria-hidden="true">🟣</div>
+          <div class="product-info">
+            <div class="muted">Colorful stickers for chats and profiles. Delivered instantly after payment.</div>
+            <div style="height:8px"></div>
+            <div class="controls">
+              <button id="payBtn" class="btn" aria-label="Buy for 0.01 Pi">Buy with Pi — 0.01</button>
+              <button id="authBtn" class="ghost">Authorize (payments)</button>
+              <button id="checkBtn" class="ghost">Check SDK</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="status" id="status">Status: idle</div>
+
+        <div id="log" aria-live="polite">Logs will appear here...</div>
+      </div>
+
+      <!-- right: receipt / help -->
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><strong>Quick Help</strong></div>
+          <div class="muted">Mobile-first • Accessible</div>
+        </div>
+
+        <div style="margin-top:10px">
+          <div class="muted">Server approval</div>
+          <div style="height:6px"></div>
+          <p style="margin:0">When you confirm payment the server approves and completes it. Your Vercel backend handles approvals securely.</p>
+        </div>
+
+        <div style="height:12px"></div>
+
+        <div id="receipt" class="receipt hidden" aria-hidden="true">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div><strong>Receipt</strong></div>
+            <div class="success-badge">Paid</div>
+          </div>
+          <div style="height:8px"></div>
+          <div class="muted">Item: Digital Sticker Pack</div>
+          <div style="height:6px"></div>
+          <div>Amount: <strong>0.01 Pi</strong></div>
+          <div style="height:6px"></div>
+          <div>Payment ID: <div class="tx" id="receiptId"></div></div>
+          <div style="height:6px"></div>
+          <div>Tx ID: <div class="tx"><a id="txLink" class="small" target="_blank" rel="noreferrer"></a></div></div>
+          <div style="height:10px"></div>
+          <button id="closeReceipt" class="ghost" style="width:100%">Close</button>
+        </div>
+
+        <div style="height:12px"></div>
+
+        <div class="muted" style="font-size:13px">Developer notes:</div>
+        <ul style="margin:6px 0 0 16px;color:var(--muted);font-size:14px">
+          <li>Use Pi Browser for payments</li>
+          <li>Server endpoint: <code>/api/approve-payment</code></li>
+          <li>Env var: <code>PI_API_KEY</code> (kept in Vercel)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="height:20px"></div>
+    <footer style="text-align:center;color:var(--muted)">Made with ❤️ — StorePi demo</footer>
+  </div>
+
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<script>
+/* ---------- helpers & UI ---------- */
+const statusEl = document.getElementById('status');
+const logEl = document.getElementById('log');
+const payBtn = document.getElementById('payBtn');
+const authBtn = document.getElementById('authBtn');
+const checkBtn = document.getElementById('checkBtn');
+const receiptEl = document.getElementById('receipt');
+const receiptIdEl = document.getElementById('receiptId');
+const txLinkEl = document.getElementById('txLink');
+const closeReceipt = document.getElementById('closeReceipt');
+
+function t(){ return new Date().toISOString(); }
+function appendLog(...parts){
+  const text = parts.map(p => typeof p === 'object' ? JSON.stringify(p) : String(p)).join(' ');
+  const line = t() + '  ' + text;
+  logEl.textContent = line + "\\n" + logEl.textContent;
+  console.log(...parts);
+}
+function setStatus(s){ statusEl.textContent = 'Status: ' + s; appendLog('STATUS', s); }
+function showReceipt(paymentId, txid){
+  receiptEl.classList.remove('hidden');
+  receiptEl.setAttribute('aria-hidden','false');
+  receiptIdEl.textContent = paymentId;
+  txLinkEl.href = (txid ? ('https://api.testnet.minepi.com/transactions/' + txid) : '#');
+  txLinkEl.textContent = txid || '(no tx)';
+}
+function hideReceipt(){ receiptEl.classList.add('hidden'); receiptEl.setAttribute('aria-hidden','true'); }
+
+closeReceipt.onclick = ()=> hideReceipt();
+
+/* ---------- init Pi SDK early ---------- */
+try {
+  if (typeof Pi !== 'undefined' && typeof Pi.init === 'function') {
+    Pi.init({ version: "2.0" });
+    appendLog('✅ Pi SDK initialized successfully');
+  } else {
+    appendLog('Pi object not available (open in Pi Browser for payments)');
+  }
+} catch(e){ appendLog('Pi.init error', e); }
+
+/* ---------- SDK checks ---------- */
+checkBtn.addEventListener('click', ()=>{
+  const present = typeof Pi !== 'undefined';
+  const hasAuth = present && typeof Pi.authenticate === 'function';
+  const hasCreate = present && typeof Pi.createPayment === 'function';
+  appendLog('Pi present:', present, 'authenticate:', hasAuth, 'createPayment:', hasCreate);
+  setStatus('Checked SDK - see log');
+});
+
+/* ---------- authorize ---------- */
+authBtn.addEventListener('click', async ()=>{
+  if (typeof Pi === 'undefined') { appendLog('Open in Pi Browser to authorize'); alert('Open this page in Pi Browser to authorize'); return; }
+  setStatus('Authenticating (requesting payments scope)...');
+  appendLog('Calling Pi.authenticate with scopes ["payments"]');
+  try{
+    const res = await Pi.authenticate(['payments'], function(incomplete){ appendLog('authenticate incomplete callback', incomplete); });
+    appendLog('authenticate resolved:', res);
+    setStatus('Authorized');
+  }catch(err){
+    appendLog('Auth error', err || '{}');
+    setStatus('Auth failed');
+    alert('Authorization failed. Open this app from Pi Browser -> My Apps and try again.');
+  }
+});
+
+/* ---------- Ping server helper (reads body once) ---------- */
+async function pingServer(){
+  setStatus('Pinging server...');
+  try{
+    const r = await fetch('/api/approve-payment',{method:'GET'});
+    const txt = await r.text();
+    let data;
+    try { data = JSON.parse(txt); } catch(e){ data = {raw: txt}; }
+    appendLog('/api/approve-payment response', r.status, data);
+    setStatus('Ping finished');
+  }catch(e){
+    appendLog('Ping error', String(e));
+    setStatus('Ping error');
+  }
+}
+
+/* ---------- purchase flow ---------- */
+payBtn.addEventListener('click', async ()=>{
+  hideReceipt();
+  if (typeof Pi === 'undefined' || typeof Pi.createPayment !== 'function'){ appendLog('Pi.createPayment not available; use Pi Browser and authorize'); alert('Open in Pi Browser and authorize first'); return; }
+
+  setStatus('Creating payment...');
+  appendLog('about to call Pi.createPayment (server-approve flow)');
+  const payload = { amount: 0.01, memo: 'StorePi Demo Payment', metadata: { productId: 'stickers-001' } };
+
+  const callbacks = {
+    onReadyForServerApproval: async function(paymentId){
+      appendLog('onReadyForServerApproval', paymentId);
+      setStatus('Ready for approval: ' + paymentId);
+
+      // ask server to approve
+      try{
+        const resp = await fetch('/api/approve-payment', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ paymentId })
+        });
+        const text = await resp.text();
+        const data = (()=>{ try{return JSON.parse(text);}catch(e){return {raw:text}; } })();
+        appendLog('Server approve response', resp.status, data);
+        if (resp.ok) {
+          // server approved — wait for SDK onReadyForServerCompletion
+          setStatus('Server approved — waiting for completion');
+        } else {
+          setStatus('Server approval failed');
+          alert('Server approval failed; check logs.');
+        }
+      }catch(e){
+        appendLog('Server approve error', String(e));
+        setStatus('Server approval error');
+      }
+    },
+
+    onReadyForServerCompletion: function(paymentId, txid){
+      appendLog('onReadyForServerCompletion', paymentId, txid);
+      setStatus('Payment completed');
+      showReceipt(paymentId, txid);
+    },
+
+    onCancel: function(paymentId){
+      appendLog('onCancel', paymentId);
+      setStatus('Payment canceled');
+      alert('Payment was cancelled.');
+    },
+
+    onError: function(err, payment){
+      appendLog('onError', err, payment);
+      setStatus('Payment error');
+      alert('Payment error — check logs.');
     }
-    html,body{height:100%;margin:0;background:linear-gradient(180deg,#f6fbff,#eef7ff);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;}
-    .wrap{max-width:920px;margin:28px auto;padding:18px;}
-    .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;overflow:hidden;}
-    header{display:flex;gap:12px;align-items:center}
-    .logo{width:56px;height:56px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,var(--accent),var(--primary));color:#fff;font-weight:700}
-    h1{margin:0;font-size:18px;color:#073047}
-    p.lead{margin:6px 0 0;color:var(--muted);font-size:13px}
-    .controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
-    .btn{background:var(--primary);border:0;color:white;padding:12px;border-radius:10px;font-weight:600;cursor:pointer}
-    .btn.secondary{background:#e6f2fb;color:var(--primary);border:1px solid rgba(16,111,164,0.08)}
-    .full{grid-column:1/-1}
-    #status{margin-top:12px;padding:10px;border-radius:8px;background:#eef9ff;color:#0b4c6b;font-weight:600}
-    .row{display:flex;gap:8px;align-items:center;margin-top:12px}
-    .log-wrap{margin-top:12px}
-    .log{background:#071427;color:#bfe8ff;padding:12px;border-radius:8px;font-family:monospace;font-size:12px;max-height:260px;overflow:auto;white-space:pre-wrap}
-    .small{font-size:13px;color:var(--muted)}
-    .success-screen{display:none;padding:18px;text-align:center}
-    .success-screen.active{display:block}
-    .tx{word-break:break-all;background:#f1f9f5;padding:10px;border-radius:8px;margin-top:10px;color:#025e3d;font-size:13px}
-    @media(max-width:
+  };
+
+  try{
+    Pi.createPayment(payload, callbacks);
+    appendLog('Pi.createPayment invoked.');
+  }catch(e){
+    appendLog('createPayment threw', e);
+    setStatus('createPayment threw error');
+    alert('Error creating payment: ' + String(e));
+  }
+});
+
+/* quick ping button not visible in product area but can be used via console if needed */
+window.pingServer = pingServer;
+</script>
+</body>
+</html>
