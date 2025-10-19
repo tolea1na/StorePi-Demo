@@ -1,39 +1,22 @@
 // api/manual-complete.js
-// Usage (browser): /api/manual-complete?paymentId=PAYMENT_ID&txid=TXID
 export default async function handler(req, res) {
+  const paymentId = req.query.paymentId;
+  const txid = req.query.txid;
+  const API_KEY = process.env.PI_API_KEY || process.env.PI_SERVER_API_KEY;
+  if (!paymentId) return res.status(400).json({ ok:false, error:'paymentId required' });
+  if (!API_KEY) return res.status(500).json({ ok:false, error:'Missing PI_API_KEY' });
   try {
-    const paymentId = req.query.paymentId;
-    const txid = req.query.txid;
-    const API_KEY = process.env.PI_API_KEY;
-
-    if (!paymentId) return res.status(400).json({ ok:false, error: "Missing paymentId" });
-    if (!txid) return res.status(400).json({ ok:false, error: "Missing txid" });
-    if (!API_KEY) return res.status(500).json({ ok:false, error: "Missing PI_API_KEY in environment" });
-
-    const url = `https://api.minepi.com/v2/payments/${encodeURIComponent(paymentId)}/complete`;
-
-    const r = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Key ${API_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ txid })
-    });
-
-    const text = await r.text().catch(() => '');
-    let parsed;
-    try { parsed = JSON.parse(text); } catch(e) { parsed = { raw: text }; }
-
-    return res.status(r.status).json({
-      ok: r.ok,
-      status: r.status,
-      paymentId,
-      txid,
-      piResponse: parsed
-    });
-  } catch (err) {
-    console.error('manual-complete error', err);
-    return res.status(500).json({ ok:false, error: String(err) });
+    const headers = { 'Authorization': `Key ${API_KEY}`, 'Content-Type': 'application/json' };
+    // approve
+    await fetch(`https://api.minepi.com/v2/payments/${encodeURIComponent(paymentId)}/approve`, { method:'POST', headers, body: JSON.stringify({}) });
+    // complete if txid provided
+    let c = null;
+    if (txid) {
+      const cr = await fetch(`https://api.minepi.com/v2/payments/${encodeURIComponent(paymentId)}/complete`, { method:'POST', headers, body: JSON.stringify({ txid }) });
+      c = await cr.text();
+    }
+    return res.status(200).json({ ok:true, paymentId, txid, complete: c });
+  } catch(e) {
+    return res.status(500).json({ ok:false, error: String(e) });
   }
 }
