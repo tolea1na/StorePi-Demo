@@ -1,37 +1,39 @@
 // api/manual-complete.js
-// This endpoint finalizes a Pi payment by marking it "completed" via the Pi Network API.
-
+// Usage (browser): /api/manual-complete?paymentId=PAYMENT_ID&txid=TXID
 export default async function handler(req, res) {
   try {
-    const { paymentId } = req.query;
+    const paymentId = req.query.paymentId;
+    const txid = req.query.txid;
     const API_KEY = process.env.PI_API_KEY;
 
-    if (!paymentId) {
-      return res.status(400).json({ ok: false, error: "Missing paymentId" });
-    }
-    if (!API_KEY) {
-      return res.status(500).json({ ok: false, error: "Missing PI_API_KEY in environment" });
-    }
+    if (!paymentId) return res.status(400).json({ ok:false, error: "Missing paymentId" });
+    if (!txid) return res.status(400).json({ ok:false, error: "Missing txid" });
+    if (!API_KEY) return res.status(500).json({ ok:false, error: "Missing PI_API_KEY in environment" });
 
-    // Call Pi Network "complete payment" endpoint
-    const response = await fetch(`https://api.minepi.com/v2/payments/${paymentId}/complete`, {
-      method: "POST",
+    const url = `https://api.minepi.com/v2/payments/${encodeURIComponent(paymentId)}/complete`;
+
+    const r = await fetch(url, {
+      method: 'POST',
       headers: {
-        "Authorization": `Key ${API_KEY}`,
-        "Content-Type": "application/json",
+        'Authorization': `Key ${API_KEY}`,
+        'Content-Type': 'application/json'
       },
+      body: JSON.stringify({ txid })
     });
 
-    const data = await response.json();
+    const text = await r.text().catch(() => '');
+    let parsed;
+    try { parsed = JSON.parse(text); } catch(e) { parsed = { raw: text }; }
 
-    res.status(response.status).json({
-      ok: true,
-      message: "Payment marked as completed",
+    return res.status(r.status).json({
+      ok: r.ok,
+      status: r.status,
       paymentId,
-      piResponse: data,
+      txid,
+      piResponse: parsed
     });
-  } catch (error) {
-    console.error("Manual complete error:", error);
-    res.status(500).json({ ok: false, error: error.message });
+  } catch (err) {
+    console.error('manual-complete error', err);
+    return res.status(500).json({ ok:false, error: String(err) });
   }
 }
