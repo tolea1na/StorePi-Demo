@@ -1,14 +1,7 @@
 {
-  "name": "store-pi-demo",
+  "name": "storepi-demo",
   "version": "1.0.0",
   "private": true,
-  "engines": {
-    "node": "22.x"
-  },
-  "scripts": {
-    "start": "node api/approve-payment.js"
-  },
-  "dependencies": {
-    "node-fetch": "^2.6.7"
-  }
+  "engines": { "node": "22.x" },
+  "dependencies": {}
 }
