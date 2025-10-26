@@ -1,5 +1,5 @@
 {
-  "name": "storepi-demo",
+  "name": "storepi",
   "version": "1.0.0",
   "private": true,
   "engines": { "node": "22.x" },
