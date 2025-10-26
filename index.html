@@ -1,28 +1,17 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>StorePi — Marketplace</title>
-
-<!-- Pi SDK -->
 <script src="https://sdk.minepi.com/pi-sdk.js" defer></script>
-
-<!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-
 <style>
   :root{
-    --bg:#f6f8fb;
-    --card:#ffffff;
-    --muted:#6b7b8c;
-    --text:#0f1724;
-    --accent:#003399; /* Inter-ish deep blue */
-    --accent-2:#0a66ff;
-    --gold:#ffd04d;
+    --bg:#f6f8fb; --card:#ffffff; --muted:#6b7b8c; --text:#0f1724;
+    --blue:#003399; --blue-2:#0a66ff; --gold:#ffd04d;
     --glass: rgba(2,6,23,0.04);
-    --radius:14px;
-    --shadow: 0 10px 30px rgba(15,23,42,0.08);
+    --radius:14px; --shadow: 0 10px 30px rgba(15,23,42,0.08);
   }
   *{box-sizing:border-box}
   html,body{height:100%;margin:0;background:var(--bg);font-family:Inter,system-ui,Arial;color:var(--text);-webkit-font-smoothing:antialiased}
@@ -30,12 +19,12 @@
   .app{background:linear-gradient(180deg,var(--card),#fbfdff);border-radius:18px;padding:18px;box-shadow:var(--shadow);overflow:hidden}
   header{display:flex;align-items:center;justify-content:space-between;gap:16px}
   .brand{display:flex;gap:12px;align-items:center}
-  .logo{height:48px;width:48px;border-radius:10px;background:linear-gradient(180deg,var(--accent),#062b9a);display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:20px}
+  .logo{height:48px;width:48px;border-radius:10px;background:linear-gradient(180deg,var(--blue-2),var(--blue));display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:18px}
   h1{margin:0;font-size:20px}
   .subtitle{color:var(--muted);font-size:13px;margin-top:4px}
   nav{display:flex;gap:10px;align-items:center}
   .nav-btn{background:transparent;border:1px solid rgba(2,6,23,0.06);padding:8px 12px;border-radius:10px;color:var(--muted);cursor:pointer}
-  .cta{background:linear-gradient(180deg,var(--accent-2),var(--accent));color:white;padding:10px 14px;border-radius:12px;border:0;font-weight:700;cursor:pointer}
+  .cta{background:linear-gradient(180deg,var(--blue-2),var(--blue));color:white;padding:10px 14px;border-radius:12px;border:0;font-weight:700;cursor:pointer}
   main{display:flex;gap:24px;margin-top:18px}
   .left{flex:1;min-width:320px}
   .right{width:360px}
@@ -44,32 +33,25 @@
   .filters{display:flex;gap:8px}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:16px}
   .product{background:white;border-radius:12px;padding:12px;border:1px solid rgba(2,6,23,0.03);box-shadow:0 6px 18px rgba(12,20,40,0.03)}
-  .thumb{height:140px;border-radius:10px;background:linear-gradient(180deg,#e9f0ff,#f6f9ff);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--accent);font-size:14px}
+  .thumb{height:140px;border-radius:10px;background:linear-gradient(180deg,#e9f0ff,#f6f9ff);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--blue);font-size:14px}
   .title{margin-top:10px;font-weight:700}
   .seller{color:var(--muted);font-size:13px;margin-top:4px}
-  .price{margin-top:10px;font-weight:800;color:var(--accent)}
+  .price{margin-top:10px;font-weight:800;color:var(--blue)}
   .buy-row{display:flex;gap:8px;margin-top:12px;align-items:center}
-  .btn-primary{background:linear-gradient(180deg,var(--accent-2),var(--accent));color:white;border:0;padding:10px 12px;border-radius:10px;cursor:pointer;font-weight:700}
+  .btn-primary{background:linear-gradient(180deg,var(--blue-2),var(--blue));color:white;border:0;padding:10px 12px;border-radius:10px;cursor:pointer;font-weight:700}
   .btn-ghost{background:transparent;border:1px solid rgba(2,6,23,0.06);padding:8px 10px;border-radius:10px;color:var(--muted);cursor:pointer}
   .panel{background:linear-gradient(180deg,white,#fbfdff);border-radius:12px;padding:14px;border:1px solid rgba(2,6,23,0.03)}
-  .panel h3{margin:0 0 8px 0}
-  .small{font-size:13px;color:var(--muted);}
   #status{margin-top:10px;padding:10px;border-radius:8px;background:var(--glass);color:var(--muted)}
   #log{margin-top:12px;background:#091427;color:#d8f0ff;padding:10px;border-radius:8px;height:220px;overflow:auto;font-family:monospace;font-size:12px}
   footer{margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
   .input{width:100%;padding:10px;border-radius:10px;border:1px solid rgba(2,6,23,0.06)}
-  .muted{color:var(--muted)}
-  @media (max-width:900px){
-    main{flex-direction:column}
-    .right{width:100%}
-  }
+  @media (max-width:900px){ main{flex-direction:column} .right{width:100%} }
 </style>
 </head>
 <body>
   <div class="container">
-    <div class="app" role="application" aria-label="StorePi marketplace">
+    <div class="app" role="application">
 
-      <!-- Header -->
       <header>
         <div class="brand">
           <div class="logo" aria-hidden>SP</div>
@@ -80,46 +62,40 @@
         </div>
 
         <nav>
-          <button class="nav-btn" id="btnExplore">Explore</button>
-          <button class="nav-btn" id="btnMy">My Listings</button>
-          <button class="nav-btn" id="btnAdmin">Admin</button>
-          <button class="cta" id="btnPublish">Publish</button>
+          <button class="nav-btn">Explore</button>
+          <button class="nav-btn">My Listings</button>
+          <button class="nav-btn">Admin</button>
+          <button class="cta">Publish</button>
         </nav>
       </header>
 
-      <!-- Body -->
       <main>
-        <!-- Left: product grid -->
         <section class="left" aria-label="Products">
           <div class="search-row">
             <input id="searchInput" class="search" placeholder="Search products, creators..." />
             <div class="filters">
-              <button class="nav-btn" id="filterAll">All</button>
-              <button class="nav-btn" id="filterDigital">Digital</button>
-              <button class="nav-btn" id="filterPhysical">Physical</button>
+              <button class="nav-btn">All</button>
+              <button class="nav-btn">Digital</button>
+              <button class="nav-btn">Physical</button>
             </div>
           </div>
 
-          <div class="grid" id="productGrid">
-            <!-- products injected by JS -->
-          </div>
+          <div class="grid" id="productGrid"></div>
         </section>
 
-        <!-- Right: control / purchase panel -->
         <aside class="right">
           <div class="panel">
             <h3>Quick Checkout</h3>
-            <div class="small">Login is required only at checkout. Click a product → Buy → follow Pi Browser prompts.</div>
+            <div style="font-size:13px;color:var(--muted)">Login required at checkout only. Select a product then Buy.</div>
 
             <div style="margin-top:12px">
-              <label class="small">Selected</label>
-              <div id="selectedName" style="font-weight:700;margin-top:6px">— none —</div>
-              <div id="selectedPrice" class="muted" style="margin-top:4px">—</div>
+              <div style="font-weight:700" id="selectedName">— none —</div>
+              <div id="selectedPrice" style="color:var(--muted);margin-top:6px">—</div>
             </div>
 
             <div style="margin-top:12px">
               <button id="checkSdk" class="btn-primary" style="width:100%;margin-bottom:8px">Check SDK</button>
-              <button id="authorize" class="btn-primary" style="width:100%;margin-bottom:8px">Authorize (payments)</button>
+              <button id="authorize" class="btn-primary" style="width:100%;margin-bottom:8px">Authorize</button>
               <button id="buyBtn" class="btn-primary" style="width:100%;" disabled>Buy — 0.01 π</button>
             </div>
 
@@ -128,12 +104,10 @@
 
           <div class="panel" style="margin-top:12px">
             <h3>Developer tools</h3>
-            <div class="small">Server approve endpoint:</div>
             <div style="margin-top:8px"><code>/api/approve-payment</code></div>
-
             <div style="margin-top:12px">
               <input id="manualPaymentId" class="input" placeholder="paymentId for manual complete / debug" />
-              <input id="manualTxid" class="input" placeholder="txid for manual complete" style="margin-top:8px" />
+              <input id="manualTxid" class="input" placeholder="txid for manual complete" style="margin-top:8px"/>
               <div style="display:flex;gap:8px;margin-top:8px">
                 <button id="manualComplete" class="btn-ghost">Manual Complete</button>
                 <button id="cancelPending" class="btn-ghost">Cancel Pending</button>
@@ -149,28 +123,16 @@
         </aside>
       </main>
 
-      <footer>
-        Made with <span style="color:var(--accent)">💙</span> — Forza Inter!
-      </footer>
+      <footer>Made with <span style="color:var(--blue)">💙</span> — Forza Inter!</footer>
     </div>
   </div>
 
 <script>
-/* STOREPI — production-focused single-file client
-   Features:
-   - Product grid (static dataset to start)
-   - Click product -> sets selection
-   - Buy button: ensures Pi.authenticate (requires login) then calls Pi.createPayment with callbacks
-   - Server approval: POST /api/approve-payment { paymentId }
-   - Manual complete: GET /api/manual-complete?paymentId=...&txid=...
-   - Mock mode if Pi SDK absent (for dev/testing)
-*/
-
+/* Minimal professional client — Pi SDK safe + mock fallback */
 const PRODUCTS = [
-  { id: 'p-course-001', name: 'Masterclass: JavaScript', seller: 'EduPi', price: 12.5, type: 'digital' },
-  { id: 'p-earbuds-021', name: 'Wireless Earbuds', seller: 'TechHub', price: 25.0, type: 'physical' },
-  { id: 'p-poster-009', name: 'Digital Poster', seller: 'Creator', price: 3.0, type: 'digital' },
-  { id: 'p-theme-002', name: 'Pro UI Kit', seller: 'Designs', price: 7.0, type: 'digital' }
+  { id:'p-001', name:'Masterclass: JavaScript', seller:'EduPi', price:12.5, type:'digital' },
+  { id:'p-002', name:'Wireless Earbuds', seller:'TechHub', price:25.0, type:'physical' },
+  { id:'p-003', name:'Pro UI Kit', seller:'Designs', price:7.0, type:'digital' },
 ];
 
 const logEl = document.getElementById('log');
@@ -181,244 +143,155 @@ const selectedPrice = document.getElementById('selectedPrice');
 const buyBtn = document.getElementById('buyBtn');
 const authorizeBtn = document.getElementById('authorize');
 const checkSdkBtn = document.getElementById('checkSdk');
-const manualCompleteBtn = document.getElementById('manualComplete');
-const cancelPendingBtn = document.getElementById('cancelPending');
-const pingServerBtn = document.getElementById('pingServer');
-const manualPaymentIdInput = document.getElementById('manualPaymentId');
-const manualTxidInput = document.getElementById('manualTxid');
 
-let selectedProduct = null;
-let pendingPayment = JSON.parse(localStorage.getItem('storepi_pending') || 'null');
+let selected = null;
 
 function now(){ return new Date().toISOString(); }
 function log(...args){ const line = args.map(a=> typeof a==='object' ? JSON.stringify(a) : String(a)).join(' '); logEl.textContent = now() + '  ' + line + '\\n' + logEl.textContent; console.log(...args); }
 function setStatus(s){ statusEl.textContent = 'Status: ' + s; log('STATUS', s); }
 
-function renderProducts(list){
+function renderProducts(){
   productGrid.innerHTML = '';
-  list.forEach(p => {
-    const div = document.createElement('div');
-    div.className = 'product';
-    div.innerHTML = `
-      <div class="thumb" aria-hidden>${p.type.toUpperCase()}</div>
+  PRODUCTS.forEach(p=>{
+    const el = document.createElement('div');
+    el.className = 'product';
+    el.innerHTML = `
+      <div class="thumb">${p.type.toUpperCase()}</div>
       <div class="title">${escapeHtml(p.name)}</div>
       <div class="seller">${escapeHtml(p.seller)}</div>
-      <div class="price">${Number(p.price).toFixed(2)} π</div>
+      <div class="price">${p.price.toFixed(2)} π</div>
       <div class="buy-row">
-         <button class="btn-primary" data-id="${p.id}">Buy</button>
-         <button class="btn-ghost" data-id="${p.id}" style="border:1px solid rgba(2,6,23,0.06)">Details</button>
+        <button class="btn-primary" data-id="${p.id}">Buy</button>
+        <button class="btn-ghost" data-id="${p.id}">Details</button>
       </div>
     `;
-    productGrid.appendChild(div);
+    productGrid.appendChild(el);
   });
-  // attach handlers
   productGrid.querySelectorAll('.btn-primary').forEach(b=>{
-    b.addEventListener('click', (ev)=>{
-      const id = ev.currentTarget.getAttribute('data-id');
-      selectProductById(id);
-    });
+    b.addEventListener('click', e=> selectProduct(e.target.dataset.id));
   });
 }
 
-function selectProductById(id){
-  const p = PRODUCTS.find(x=>x.id===id);
-  if(!p) return;
-  selectedProduct = p;
-  selectedName.textContent = p.name;
-  selectedPrice.textContent = `${p.price.toFixed(2)} π — ${p.seller}`;
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function selectProduct(id){
+  selected = PRODUCTS.find(x=>x.id===id);
+  selectedName.textContent = selected.name;
+  selectedPrice.textContent = `${selected.price.toFixed(2)} π — ${selected.seller}`;
   buyBtn.disabled = false;
-  buyBtn.textContent = `Buy — ${p.price.toFixed(2)} π`;
-  setStatus('Product selected: ' + p.name);
+  buyBtn.textContent = `Buy — ${selected.price.toFixed(2)} π`;
+  setStatus('Selected: ' + selected.name);
 }
 
-function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c] || c)); }
-
-/* Pi SDK safe init: wait for window.Pi up to 4s */
-async function waitForPi(timeout=4000){
+/* Wait for Pi SDK (poll) */
+async function waitForPi(ms=4000){
   const start = Date.now();
-  while(Date.now() - start < timeout){
+  while(Date.now() - start < ms){
     if(window.Pi) return true;
-    await new Promise(r=>setTimeout(r, 150));
+    await new Promise(r=>setTimeout(r,150));
   }
   return !!window.Pi;
 }
 async function safeInitPi(){
   try{
     const present = await waitForPi(4000);
-    if(!present){ log('Pi SDK not found; using mock mode'); return false; }
-    if(typeof Pi.init === 'function'){ Pi.init({ version: '2.0' }); log('Pi.init called'); return true; }
+    if(!present){ log('Pi SDK not present — mock mode'); return false; }
+    if(typeof Pi.init === 'function'){ Pi.init({ version:'2.0' }); log('Pi.init called'); return true; }
     log('Pi present but init() missing'); return false;
-  }catch(e){
-    log('safeInitPi error', e); return false;
-  }
+  }catch(e){ log('safeInitPi error', e); return false; }
 }
 
-/* Server approve request */
 async function requestServerApprove(paymentId){
   setStatus('Requesting server approval...');
   try{
-    const r = await fetch('/api/approve-payment', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ paymentId })
-    });
+    const r = await fetch('/api/approve-payment', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ paymentId }) });
     const j = await r.json().catch(()=>({raw:'not-json'}));
     log('/api/approve-payment', r.status, j);
-    return { ok: r.ok, status: r.status, data: j };
-  }catch(e){
-    log('server approve error', e);
-    return { ok:false, error:String(e) };
-  }
+    return { ok:r.ok, status:r.status, data:j };
+  }catch(e){ log('server approve error', e); return { ok:false, error:String(e) }; }
 }
 
-/* Buy flow: require login at payment time */
+/* Buy / Checkout */
 buyBtn.addEventListener('click', async ()=>{
-  if(!selectedProduct){ alert('Choose a product first'); return; }
-  setStatus('Starting checkout for ' + selectedProduct.name);
-  try{
-    // Ensure SDK present and authorized
-    const sdkPresent = await safeInitPi();
-    if(sdkPresent && typeof Pi.authenticate === 'function'){
-      setStatus('Authenticating (payments scope)');
-      try{
-        const auth = await Pi.authenticate(['payments'], (incomplete)=> log('authenticate incomplete', incomplete));
-        log('authenticate resolved', auth);
-      }catch(authErr){
-        log('authenticate error', authErr);
-        setStatus('Auth failed');
-        alert('Authorization failed; cannot proceed.');
-        return;
-      }
-    } else {
-      // mock simulate login for dev
-      log('Mock login (no Pi SDK)');
+  if(!selected) { alert('Choose a product first'); return; }
+  setStatus('Checkout started');
+  await safeInitPi();
+  // Ensure login at checkout
+  if(window.Pi && typeof Pi.authenticate === 'function'){
+    try{
+      setStatus('Requesting authorization (payments)');
+      await Pi.authenticate(['payments'], inc=> log('authenticate incomplete', inc));
+      setStatus('Authorized');
+    }catch(e){
+      log('authenticate error', e);
+      setStatus('Auth failed');
+      alert('Authorization failed; cannot proceed.');
+      return;
     }
+  } else {
+    log('Mock auth (no Pi SDK)');
+  }
 
-    // Prepare payment data
-    const paymentData = {
-      amount: Number(selectedProduct.price),
-      memo: `StorePi purchase: ${selectedProduct.id}`,
-      metadata: { productId:selectedProduct.id, seller:selectedProduct.seller }
-    };
+  const paymentData = { amount: Number(selected.price), memo: `Purchase ${selected.id}`, metadata:{productId:selected.id} };
 
-    // Call Pi.createPayment with callbacks style
-    const callbacks = {
-      onReadyForServerApproval: async (paymentId) => {
-        log('onReadyForServerApproval', paymentId);
-        // save pending locally
-        localStorage.setItem('storepi_pending', JSON.stringify({ paymentId, productId: selectedProduct.id, ts:Date.now() }));
-        // request server to approve
-        const res = await requestServerApprove(paymentId);
-        if(res.ok) setStatus('Server approved, waiting for completion');
-        else setStatus('Server approval failed — manual complete may be needed');
-      },
-      onReadyForServerCompletion: (paymentId, txid) => {
-        log('onReadyForServerCompletion', paymentId, txid);
-        localStorage.removeItem('storepi_pending');
-        setStatus('Payment completed — tx: ' + txid);
-        alert(`Payment complete!\nPaymentId: ${paymentId}\nTx: ${txid}`);
-      },
-      onCancel: (paymentId) => {
-        log('onCancel', paymentId);
-        setStatus('Payment canceled');
-        localStorage.removeItem('storepi_pending');
-      },
-      onError: (err, payment) => {
-        log('onError', err, payment);
-        setStatus('Payment error');
-        if(payment && payment.paymentId) localStorage.setItem('storepi_pending', JSON.stringify({ paymentId: payment.paymentId, ts:Date.now() }));
-        alert('Payment error — check logs');
-      }
-    };
+  const callbacks = {
+    onReadyForServerApproval: async (paymentId) => {
+      log('onReadyForServerApproval', paymentId);
+      localStorage.setItem('storepi_pending', JSON.stringify({ paymentId, product:selected.id, ts:Date.now() }));
+      const res = await requestServerApprove(paymentId);
+      if(res.ok) setStatus('Server approved — waiting completion');
+      else setStatus('Server approval failed');
+    },
+    onReadyForServerCompletion: (paymentId, txid) => {
+      log('onReadyForServerCompletion', paymentId, txid);
+      localStorage.removeItem('storepi_pending');
+      setStatus('Payment completed — tx: ' + txid);
+      alert(`Payment completed!\n${paymentId}\nTx: ${txid}`);
+    },
+    onCancel: (paymentId)=> {
+      log('onCancel', paymentId);
+      setStatus('Payment canceled'); localStorage.removeItem('storepi_pending');
+    },
+    onError: (err, payment) => { log('onError', err, payment); setStatus('Payment error'); if(payment && payment.paymentId) localStorage.setItem('storepi_pending', JSON.stringify({ paymentId:payment.paymentId, ts:Date.now() })); }
+  };
 
-    // call createPayment — support callback & promise-style SDKs
+  try{
     if(window.Pi && typeof Pi.createPayment === 'function'){
       const maybePromise = Pi.createPayment(paymentData, callbacks);
-      if(maybePromise && typeof maybePromise.then === 'function'){
-        maybePromise.then(r=>log('createPayment promise resolved', r)).catch(e=>log('createPayment promise rejected', e));
-      } else {
-        log('createPayment invoked (callback flow)');
-      }
-      setStatus('Payment initiated (awaiting approval)');
+      if(maybePromise && typeof maybePromise.then === 'function'){ maybePromise.then(r=>log('createPayment promise resolved', r)).catch(e=>log('createPayment promise rejected', e)); }
+      else log('createPayment invoked (callback flow)');
+      setStatus('Payment initiated');
     } else {
-      // Mock flow (for desktop testing)
       const mockId = 'MOCK-' + Math.random().toString(36).slice(2,8);
       callbacks.onReadyForServerApproval(mockId);
-      setTimeout(async ()=> {
-        await requestServerApprove(mockId);
-        callbacks.onReadyForServerCompletion(mockId, 'MOCKTX-' + Math.random().toString(36).slice(2,8));
-      }, 1000);
-      setStatus('Mock payment created');
+      setTimeout(async ()=>{ await requestServerApprove(mockId); callbacks.onReadyForServerCompletion(mockId, 'MOCKTX-' + Math.random().toString(36).slice(2,8)); }, 1000);
+      setStatus('Mock payment started');
     }
-  }catch(e){
-    log('buy flow error', e);
-    setStatus('Buy error');
-  }
+  }catch(e){ log('buy flow error', e); setStatus('Buy error'); }
 });
 
-/* Attach product grid & interactions */
-renderProducts(PRODUCTS);
-
-/* Check SDK & authorize buttons */
-checkSdkBtn.addEventListener('click', async ()=>{
-  setStatus('Checking SDK...');
-  await safeInitPi();
-  const info = await (async ()=>{ const present = !!window.Pi; return { present }; })();
-  setStatus('Checked SDK - see logs');
-});
-authorizeBtn.addEventListener('click', async ()=>{
-  setStatus('Authenticating (payments scope)...');
-  try{
-    await safeInitPi();
-    if(window.Pi && typeof Pi.authenticate === 'function'){
-      const res = await Pi.authenticate(['payments'], (incomplete)=> log('authenticate callback', incomplete));
-      log('authenticate resolved', res);
-      setStatus('Authorized');
-    } else {
-      setStatus('Mock authorized');
-    }
-  }catch(e){
-    log('authorize error', e);
-    setStatus('Auth failed');
-  }
-});
+checkSdkBtn.addEventListener('click', async ()=>{ setStatus('Checking SDK...'); await safeInitPi(); setStatus('Checked SDK - see logs'); });
+authorizeBtn.addEventListener('click', async ()=>{ setStatus('Authenticating...'); await safeInitPi(); if(window.Pi && Pi.authenticate){ try{ await Pi.authenticate(['payments']); setStatus('Authorized'); }catch(e){ log('auth err', e); setStatus('Auth failed'); } } else { setStatus('Mock authorized'); } });
 
 /* Developer tools */
-manualCompleteBtn.addEventListener('click', async ()=>{
-  const pid = manualPaymentIdInput.value.trim();
-  const tx = manualTxidInput.value.trim();
+document.getElementById('manualComplete').addEventListener('click', async ()=>{
+  const pid = document.getElementById('manualPaymentId').value.trim();
+  const tx = document.getElementById('manualTxid').value.trim();
   if(!pid || !tx){ alert('Provide paymentId and txid'); return; }
-  setStatus('Manual complete...');
+  setStatus('Manual completing...');
   try{
     const r = await fetch(`/api/manual-complete?paymentId=${encodeURIComponent(pid)}&txid=${encodeURIComponent(tx)}`);
     const j = await r.json().catch(()=>({raw:'not-json'}));
     log('/api/manual-complete', r.status, j);
-    if(r.ok) { setStatus('Manual complete OK'); localStorage.removeItem('storepi_pending'); alert('Manual completed'); }
-    else setStatus('Manual complete failed');
+    if(r.ok){ setStatus('Manual complete OK'); localStorage.removeItem('storepi_pending'); alert('Manual complete OK'); } else setStatus('Manual complete failed');
   }catch(e){ log('manual complete error', e); setStatus('Manual error'); }
 });
+document.getElementById('cancelPending').addEventListener('click', ()=>{ if(confirm('Clear pending payment?')){ localStorage.removeItem('storepi_pending'); setStatus('Pending cleared'); }});
+document.getElementById('pingServer').addEventListener('click', async ()=>{ setStatus('Pinging server...'); try{ const r = await fetch('/api/approve-payment'); const j = await r.json().catch(()=>({raw:'not-json'})); log('/api/approve-payment GET', r.status, j); setStatus('Ping -> ' + r.status); }catch(e){ log('ping error', e); setStatus('Ping failed'); } });
 
-cancelPendingBtn.addEventListener('click', ()=>{
-  if(!localStorage.getItem('storepi_pending')){ alert('No pending saved'); return; }
-  if(confirm('Clear stored pending payment?')){ localStorage.removeItem('storepi_pending'); setStatus('Pending cleared'); }
-});
-
-pingServerBtn.addEventListener('click', async ()=>{
-  setStatus('Pinging server...');
-  try{
-    const r = await fetch('/api/approve-payment');
-    const j = await r.json().catch(()=>({raw:'not-json'}));
-    log('/api/approve-payment GET', r.status, j);
-    setStatus('Ping -> ' + r.status);
-  }catch(e){ log('ping error', e); setStatus('Ping failed'); }
-});
-
-/* Utility: set initial UI if pending exists */
-(function initFromPending(){
-  const p = JSON.parse(localStorage.getItem('storepi_pending') || 'null');
-  if(p) { log('Found saved pending payment', p); setStatus('Pending saved: ' + p.paymentId); manualPaymentIdInput.value = p.paymentId || ''; }
-})();
-
+/* Initialize */
+renderProducts();
+(function initPending(){ const p = JSON.parse(localStorage.getItem('storepi_pending') || 'null'); if(p){ log('Found pending', p); setStatus('Pending: ' + p.paymentId); document.getElementById('manualPaymentId').value = p.paymentId || ''; }})();
 </script>
 </body>
 </html>
